@@ -3,7 +3,14 @@ package ru.hexaend.repository.impl;
 import ru.hexaend.entity.Contact;
 import ru.hexaend.repository.ContactRepository;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
+
 
 public class InMemoryContactRepository implements ContactRepository
 {
@@ -77,8 +84,7 @@ public class InMemoryContactRepository implements ContactRepository
                 ;
     }
 
-    private static class ContactComparator implements Comparator<Contact>
-    {
+    private static class ContactComparator implements Comparator<Contact> {
         static final ContactComparator INSTANCE = new ContactComparator();
         @Override
         public int compare(Contact c1, Contact c2)

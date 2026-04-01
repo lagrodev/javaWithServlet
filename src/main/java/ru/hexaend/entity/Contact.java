@@ -12,7 +12,12 @@ public class Contact
     private String lastName;
     private final List<String> phoneNumbers;
 
-    public static final int MAX_PHONES = 3;
+    private static final int MAX_PHONES = 3;
+
+    public static int getMaxPhones()
+    {
+        return MAX_PHONES;
+    }
 
     public Contact(String firstName, String lastName, List<String> phoneNumbers)
     {
@@ -30,22 +35,26 @@ public class Contact
         this.phoneNumbers = new ArrayList<>(phoneNumbers); // это чтобы мы не ссылку переприсвоили, а новый лист кинули в сущность
 
     }
-    private static void validate(String firstName, String lastName, List<String> phoneNumbers) {
-        if (firstName == null || firstName.isBlank()) {
+
+    private static void validate(String firstName, String lastName, List<String> phoneNumbers)
+    {
+        if (firstName == null || firstName.isBlank())
+        {
             throw new IllegalArgumentException("Имя не может быть пустым");
         }
-        if (lastName == null || lastName.isBlank()) {
+        if (lastName == null || lastName.isBlank())
+        {
             throw new IllegalArgumentException("Фамилия не может быть пустой");
         }
-        if (phoneNumbers == null || phoneNumbers.isEmpty()) {
+        if (phoneNumbers == null || phoneNumbers.isEmpty())
+        {
             throw new IllegalArgumentException("Должен быть хотя бы один номер телефона");
         }
-        if (phoneNumbers.size() > MAX_PHONES) {
+        if (phoneNumbers.size() > MAX_PHONES)
+        {
             throw new IllegalArgumentException("Превышен лимит номеров: " + MAX_PHONES);
         }
     }
-
-
 
     public String getFirstName()
     {
