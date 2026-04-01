@@ -1,0 +1,39 @@
+services:
+
+  db:
+    image: postgres:16-alpine
+    container_name: phonebook_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       phonebook
+      POSTGRES_USER:     phonebook
+      POSTGRES_PASSWORD: phonebook
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U phonebook -d phonebook"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: phonebook_app
+    depends_on:
+      db:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+    environment:
+      DB_HOST:     db
+      DB_PORT:     5432
+      DB_NAME:     phonebook
+      DB_USER:     phonebook
+      DB_PASSWORD: phonebook
+
+volumes:
+  pgdata:
