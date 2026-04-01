@@ -1,6 +1,5 @@
 package ru.hexaend.util;
 
-public interface PhoneValidator
-{
+public interface PhoneValidator {
     boolean isValid(String phone);
 }

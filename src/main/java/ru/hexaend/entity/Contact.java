@@ -5,8 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class Contact
-{
+public class Contact {
     private final UUID id;
     private String firstName;
     private String lastName;
@@ -14,18 +13,15 @@ public class Contact
 
     private static final int MAX_PHONES = 3;
 
-    public static int getMaxPhones()
-    {
+    public static int getMaxPhones() {
         return MAX_PHONES;
     }
 
-    public Contact(String firstName, String lastName, List<String> phoneNumbers)
-    {
+    public Contact(String firstName, String lastName, List<String> phoneNumbers) {
         this(UUID.randomUUID(), firstName, lastName, phoneNumbers);
     }
 
-    public Contact(UUID id, String firstName, String lastName, List<String> phoneNumbers)
-    {
+    public Contact(UUID id, String firstName, String lastName, List<String> phoneNumbers) {
         validate(
                 firstName, lastName, phoneNumbers
         );
@@ -36,8 +32,7 @@ public class Contact
 
     }
 
-    private static void validate(String firstName, String lastName, List<String> phoneNumbers)
-    {
+    private static void validate(String firstName, String lastName, List<String> phoneNumbers) {
         if (firstName == null || firstName.isBlank())
         {
             throw new IllegalArgumentException("Имя не может быть пустым");
@@ -56,14 +51,11 @@ public class Contact
         }
     }
 
-
-    public String getFirstName()
-    {
+    public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName)
-    {
+    public void setFirstName(String firstName) {
         if (firstName == null || firstName.isBlank())
         {
             throw new IllegalArgumentException("Имя не может быть пустым");
@@ -72,13 +64,11 @@ public class Contact
         this.firstName = firstName.trim();
     }
 
-    public String getLastName()
-    {
+    public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName)
-    {
+    public void setLastName(String lastName) {
         if (lastName == null || lastName.isBlank())
         {
             throw new IllegalArgumentException("Фамилия не может быть пустой");
@@ -86,14 +76,12 @@ public class Contact
         this.lastName = lastName.trim();
     }
 
-    public UUID getId()
-    {
+    public UUID getId() {
         return id;
     }
 
 
-    public List<String> getPhoneNumbers()
-    {
+    public List<String> getPhoneNumbers() {
         return Collections.unmodifiableList(phoneNumbers);
     }
 
@@ -111,8 +99,7 @@ public class Contact
     }
 
 
-    public void setPhoneNumbers(List<String> phoneNumbers)
-    {
+    public void setPhoneNumbers(List<String> phoneNumbers) {
         if (phoneNumbers == null || phoneNumbers.isEmpty())
         {
             throw new IllegalArgumentException("Должен быть хотя бы один номер телефона");
@@ -125,14 +112,12 @@ public class Contact
         this.phoneNumbers.addAll(phoneNumbers);
     }
 
-    public String getFullName()
-    {
+    public String getFullName() {
         return firstName + " " + lastName;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return String.format(
                 "%-20s %-15s %s",
                 lastName, firstName, String.join(", ", phoneNumbers)
