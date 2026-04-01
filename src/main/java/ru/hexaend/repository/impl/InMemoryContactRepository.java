@@ -27,8 +27,7 @@ public class InMemoryContactRepository implements ContactRepository
     }
 
     @Override
-    public Optional<Contact> findById(UUID id)
-    {
+    public Optional<Contact> findById(UUID id) {
         return Optional.ofNullable(storage.get(id));
     }
 
@@ -91,8 +90,8 @@ public class InMemoryContactRepository implements ContactRepository
             if (firstNameComparison != 0) {
                 return firstNameComparison;
             }
-            String c1Phone = c1.getPhoneNumbers().isEmpty() ? "" : c1.getPhoneNumbers().get(0);
-            String c2Phone = c2.getPhoneNumbers().isEmpty() ? "" : c2.getPhoneNumbers().get(0);
+            String c1Phone = c1.getPhoneNumbers().isEmpty() ? "" : c1.getPhoneNumbers().getFirst();
+            String c2Phone = c2.getPhoneNumbers().isEmpty() ? "" : c2.getPhoneNumbers().getFirst();
             return c1Phone.compareTo(c2Phone);
         }
     }

@@ -126,7 +126,7 @@ public class ConsoleUi
         {
             phones = new ArrayList<>();
             phones.add(firstPhoneInput.trim());
-            for (int i = 2; i <= Contact.MAX_PHONES; i++)
+            for (int i = 2; i <= Contact.getMaxPhones(); i++)
             {
                 String p = readLine("  Телефон " + i + " (Enter — пропустить): ");
                 if (p.isBlank())
@@ -231,11 +231,11 @@ public class ConsoleUi
         Contact contact = service.getContactById(id);
 
         System.out.println("  Текущие номера: " + String.join(", ", contact.getPhoneNumbers())
-                + "  (" + contact.getPhoneNumbers().size() + "/" + Contact.MAX_PHONES + ")");
+                + "  (" + contact.getPhoneNumbers().size() + "/" + Contact.getMaxPhones() + ")");
 
-        if (contact.getPhoneNumbers().size() >= Contact.MAX_PHONES)
+        if (contact.getPhoneNumbers().size() >= Contact.getMaxPhones())
         {
-            System.out.println("  ✗ Уже достигнут лимит из " + Contact.MAX_PHONES + " номеров.\n");
+            System.out.println("  ✗ Уже достигнут лимит из " + Contact.getMaxPhones() + " номеров.\n");
             return;
         }
 
@@ -304,7 +304,7 @@ public class ConsoleUi
     private List<String> readPhones()
     {
         List<String> phones = new ArrayList<>();
-        for (int i = 1; i <= Contact.MAX_PHONES; i++)
+        for (int i = 1; i <= Contact.getMaxPhones(); i++)
         {
             String suffix = i == 1 ? "" : " (Enter — пропустить)";
             String phone = i == 1
