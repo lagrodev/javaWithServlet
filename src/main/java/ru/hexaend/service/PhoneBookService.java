@@ -18,13 +18,13 @@ public interface PhoneBookService
     List<Contact> getAllContacts();
 
     List<Contact> searchByPhoneNumber(String phoneNumber);
+
     List<Contact> searchByLastName(String phoneNumber);
 
 
     List<Contact> searchByFirstOrLastName(String query);
 
     Contact getContactById(UUID contactId);
-
 
 
 }

@@ -10,24 +10,26 @@ import java.util.*;
 /**
  * Реализация ContactRepository через JDBC.
  * UUID хранится в БД как VARCHAR(36) — портируемо между SQLite / PostgreSQL / MySQL.
- *
+ * <p>
  * Схема:
- *   contacts      (id PK VARCHAR(36), first_name, last_name)
- *   phone_numbers (id PK AI, contact_id FK VARCHAR(36), phone)
+ * contacts      (id PK VARCHAR(36), first_name, last_name)
+ * phone_numbers (id PK AI, contact_id FK VARCHAR(36), phone)
  */
 public class JdbcContactRepository implements ContactRepository
 {
 
     private final DataSourceProvider dataSourceProvider;
 
-    public JdbcContactRepository(DataSourceProvider dataSourceProvider) {
+    public JdbcContactRepository(DataSourceProvider dataSourceProvider)
+    {
         this.dataSourceProvider = dataSourceProvider;
     }
 
     // ─── Save (upsert: delete phones → re-insert) ────────────────────────────
 
     @Override
-    public void save(Contact contact) {
+    public void save(Contact contact)
+    {
         String upsertContact = """
                 INSERT INTO contacts (id, first_name, last_name)
                 VALUES (?, ?, ?)
@@ -36,24 +38,30 @@ public class JdbcContactRepository implements ContactRepository
                         last_name  = excluded.last_name
                 """;
         String deletePhones = "DELETE FROM phone_numbers WHERE contact_id = ?";
-        String insertPhone  = "INSERT INTO phone_numbers (contact_id, phone) VALUES (?, ?)";
-        String idStr        = contact.getId().toString();
+        String insertPhone = "INSERT INTO phone_numbers (contact_id, phone) VALUES (?, ?)";
+        String idStr = contact.getId().toString();
 
-        try (Connection conn = dataSourceProvider.getConnection()) {
+        try (Connection conn = dataSourceProvider.getConnection())
+        {
             conn.setAutoCommit(false);
-            try {
-                try (PreparedStatement ps = conn.prepareStatement(upsertContact)) {
+            try
+            {
+                try (PreparedStatement ps = conn.prepareStatement(upsertContact))
+                {
                     ps.setString(1, idStr);
                     ps.setString(2, contact.getFirstName());
                     ps.setString(3, contact.getLastName());
                     ps.executeUpdate();
                 }
-                try (PreparedStatement ps = conn.prepareStatement(deletePhones)) {
+                try (PreparedStatement ps = conn.prepareStatement(deletePhones))
+                {
                     ps.setString(1, idStr);
                     ps.executeUpdate();
                 }
-                try (PreparedStatement ps = conn.prepareStatement(insertPhone)) {
-                    for (String phone : contact.getPhoneNumbers()) {
+                try (PreparedStatement ps = conn.prepareStatement(insertPhone))
+                {
+                    for (String phone : contact.getPhoneNumbers())
+                    {
                         ps.setString(1, idStr);
                         ps.setString(2, phone);
                         ps.addBatch();
@@ -61,11 +69,13 @@ public class JdbcContactRepository implements ContactRepository
                     ps.executeBatch();
                 }
                 conn.commit();
-            } catch (SQLException e) {
+            } catch (SQLException e)
+            {
                 conn.rollback();
                 throw e;
             }
-        } catch (SQLException e) {
+        } catch (SQLException e)
+        {
             throw new RuntimeException("Ошибка сохранения контакта", e);
         }
     }
@@ -78,13 +88,16 @@ public class JdbcContactRepository implements ContactRepository
 
 
     @Override
-    public void deleteById(UUID id) {
+    public void deleteById(UUID id)
+    {
         String sql = "DELETE FROM contacts WHERE id = ?";
         try (Connection conn = dataSourceProvider.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql))
+        {
             ps.setString(1, id.toString());
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (SQLException e)
+        {
             throw new RuntimeException("Ошибка удаления контакта", e);
         }
     }
@@ -92,7 +105,8 @@ public class JdbcContactRepository implements ContactRepository
     // ─── Find by ID ──────────────────────────────────────────────────────────
 
     @Override
-    public Optional<Contact> findById(UUID id) {
+    public Optional<Contact> findById(UUID id)
+    {
         String sql = """
                 SELECT c.id, c.first_name, c.last_name, p.phone
                 FROM contacts c
@@ -101,12 +115,15 @@ public class JdbcContactRepository implements ContactRepository
                 ORDER BY p.id
                 """;
         try (Connection conn = dataSourceProvider.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql))
+        {
             ps.setString(1, id.toString());
-            try (ResultSet rs = ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery())
+            {
                 return mapFirstContact(rs);
             }
-        } catch (SQLException e) {
+        } catch (SQLException e)
+        {
             throw new RuntimeException("Ошибка поиска контакта по ID", e);
         }
     }
@@ -114,7 +131,8 @@ public class JdbcContactRepository implements ContactRepository
     // ─── Find all ────────────────────────────────────────────────────────────
 
     @Override
-    public List<Contact> findAll() {
+    public List<Contact> findAll()
+    {
         String sql = """
                 SELECT c.id, c.first_name, c.last_name, p.phone
                 FROM contacts c
@@ -127,7 +145,8 @@ public class JdbcContactRepository implements ContactRepository
     // ─── Find by last name ───────────────────────────────────────────────────
 
     @Override
-    public List<Contact> findByLastName(String lastName) {
+    public List<Contact> findByLastName(String lastName)
+    {
         String sql = """
                 SELECT c.id, c.first_name, c.last_name, p.phone
                 FROM contacts c
@@ -136,12 +155,15 @@ public class JdbcContactRepository implements ContactRepository
                 ORDER BY LOWER(c.last_name), LOWER(c.first_name), p.phone
                 """;
         try (Connection conn = dataSourceProvider.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql))
+        {
             ps.setString(1, "%" + lastName.toLowerCase() + "%");
-            try (ResultSet rs = ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery())
+            {
                 return mapContacts(rs);
             }
-        } catch (SQLException e) {
+        } catch (SQLException e)
+        {
             throw new RuntimeException("Ошибка поиска по фамилии", e);
         }
     }
@@ -149,7 +171,8 @@ public class JdbcContactRepository implements ContactRepository
     // ─── Find by phone ───────────────────────────────────────────────────────
 
     @Override
-    public List<Contact> findByPhoneNumber(String phoneNumber) {
+    public List<Contact> findByPhoneNumber(String phoneNumber)
+    {
         String sql = """
                 SELECT c.id, c.first_name, c.last_name, p.phone
                 FROM contacts c
@@ -158,12 +181,15 @@ public class JdbcContactRepository implements ContactRepository
                 ORDER BY LOWER(c.last_name), LOWER(c.first_name), p.phone
                 """;
         try (Connection conn = dataSourceProvider.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql))
+        {
             ps.setString(1, "%" + phoneNumber + "%");
-            try (ResultSet rs = ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery())
+            {
                 return mapContacts(rs);
             }
-        } catch (SQLException e) {
+        } catch (SQLException e)
+        {
             throw new RuntimeException("Ошибка поиска по телефону", e);
         }
     }
@@ -179,76 +205,100 @@ public class JdbcContactRepository implements ContactRepository
                 ORDER BY LOWER(c.last_name), LOWER(c.first_name), p.phone
                 """;
         try (Connection conn = dataSourceProvider.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql))
+        {
             String param = "%" + query.toLowerCase() + "%";
             ps.setString(1, param);
             ps.setString(2, param);
-            try (ResultSet rs = ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery())
+            {
                 return mapContacts(rs);
             }
-        } catch (SQLException e) {
+        } catch (SQLException e)
+        {
             throw new RuntimeException("Ошибка поиска по имени или фамилии", e);
         }
     }
 
     // ─── Mapping helpers ─────────────────────────────────────────────────────
 
-    private List<Contact> queryContacts(String sql) {
+    private List<Contact> queryContacts(String sql)
+    {
         try (Connection conn = dataSourceProvider.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+             ResultSet rs = ps.executeQuery())
+        {
             return mapContacts(rs);
-        } catch (SQLException e) {
+        } catch (SQLException e)
+        {
             throw new RuntimeException("Ошибка запроса контактов", e);
         }
     }
 
-    private List<Contact> mapContacts(ResultSet rs) throws SQLException {
-        // LinkedHashMap сохраняет порядок, в котором строки пришли из БД (уже отсортированы)
+    private List<Contact> mapContacts(ResultSet rs) throws SQLException
+    {
         Map<UUID, ContactBuilder> builders = new LinkedHashMap<>();
-        while (rs.next()) {
-            UUID id    = UUID.fromString(rs.getString("id"));
+        while (rs.next())
+        {
+            UUID id = UUID.fromString(rs.getString("id"));
             String phone = rs.getString("phone");
             ContactBuilder b = builders.computeIfAbsent(id, key -> {
-                try {
+                try
+                {
                     return new ContactBuilder(
                             UUID.fromString(rs.getString("id")),
                             rs.getString("first_name"),
                             rs.getString("last_name"));
-                } catch (SQLException e) {
+                } catch (SQLException e)
+                {
                     throw new RuntimeException(e);
                 }
             });
-            if (phone != null) b.addPhone(phone);
+            if (phone != null)
+            {
+                b.addPhone(phone);
+            }
         }
         List<Contact> result = new ArrayList<>();
-        for (ContactBuilder b : builders.values()) {
-            if (!b.phones.isEmpty()) result.add(b.build());
+        for (ContactBuilder b : builders.values())
+        {
+            if (!b.phones.isEmpty())
+            {
+                result.add(b.build());
+            }
         }
         return result;
     }
 
-    private Optional<Contact> mapFirstContact(ResultSet rs) throws SQLException {
+    private Optional<Contact> mapFirstContact(ResultSet rs) throws SQLException
+    {
         List<Contact> list = mapContacts(rs);
-        return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
+        return list.isEmpty() ? Optional.empty() : Optional.of(list.getFirst());
     }
 
-    // ─── Inner builder ───────────────────────────────────────────────────────
 
-    private static class ContactBuilder {
+    private static class ContactBuilder
+    {
         final UUID id;
         final String firstName;
         final String lastName;
         final List<String> phones = new ArrayList<>();
 
-        ContactBuilder(UUID id, String firstName, String lastName) {
-            this.id        = id;
+        ContactBuilder(UUID id, String firstName, String lastName)
+        {
+            this.id = id;
             this.firstName = firstName;
-            this.lastName  = lastName;
+            this.lastName = lastName;
         }
 
-        void addPhone(String phone) { phones.add(phone); }
+        void addPhone(String phone)
+        {
+            phones.add(phone);
+        }
 
-        Contact build() { return new Contact(id, firstName, lastName, phones); }
+        Contact build()
+        {
+            return new Contact(id, firstName, lastName, phones);
+        }
     }
 }

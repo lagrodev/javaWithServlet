@@ -61,7 +61,8 @@ public class PhoneBookServiceImpl implements PhoneBookService
                 contactId
         ).orElseThrow(() -> new RuntimeException("Contact with id " + contactId + " not found"));
 
-        if (!phoneValidator.isValid(phoneNumber)) {
+        if (!phoneValidator.isValid(phoneNumber))
+        {
             throw new IllegalArgumentException(
                     "Phone number " + phoneNumber + " is invalid"
             );
@@ -81,7 +82,8 @@ public class PhoneBookServiceImpl implements PhoneBookService
     @Override
     public List<Contact> searchByLastName(String lastName)
     {
-        if (lastName == null || lastName.isBlank()) {
+        if (lastName == null || lastName.isBlank())
+        {
             return contactRepository.findAll();
         }
         return contactRepository.findByLastName(lastName);
@@ -90,7 +92,8 @@ public class PhoneBookServiceImpl implements PhoneBookService
     @Override
     public List<Contact> searchByPhoneNumber(String phoneNumber)
     {
-        if (phoneNumber == null || phoneNumber.isBlank()) {
+        if (phoneNumber == null || phoneNumber.isBlank())
+        {
             return contactRepository.findAll();
         }
         return contactRepository.findByPhoneNumber(phoneNumber);
@@ -100,7 +103,8 @@ public class PhoneBookServiceImpl implements PhoneBookService
     @Override
     public List<Contact> searchByFirstOrLastName(String query)
     {
-        if (query == null || query.isBlank()) {
+        if (query == null || query.isBlank())
+        {
             return contactRepository.findAll();
         }
         return contactRepository.findByFirstNameContainingOrLastNameContaining(query);

@@ -20,7 +20,6 @@ public class SingleConnectionDataSourceProvider implements DataSourceProvider
     }
 
 
-
     public SingleConnectionDataSourceProvider(String url)
     {
         this(url, null, null);
@@ -29,9 +28,12 @@ public class SingleConnectionDataSourceProvider implements DataSourceProvider
     @Override
     public Connection getConnection() throws SQLException
     {
-        if (username!= null){
+        if (username != null)
+        {
             return DriverManager.getConnection(url, username, password);
-        } else {
+        }
+        else
+        {
             return DriverManager.getConnection(url);
         }
     }
