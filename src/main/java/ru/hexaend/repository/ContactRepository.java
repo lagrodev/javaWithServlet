@@ -7,15 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ContactRepository extends MyRepository<Contact, UUID> {
-    void save(Contact contact);
-
-    void delete(Contact contact);
-
-    void deleteById(UUID id);
-
-    Optional<Contact> findById(UUID id);
-
-    List<Contact> findAll();
 
     List<Contact> findByLastName(String lastName);
 

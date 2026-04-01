@@ -63,8 +63,7 @@ public class InMemoryContactRepository implements ContactRepository {
     @Override
     public List<Contact> findByFirstNameContainingOrLastNameContaining(String query) {
 
-        if (query == null || query.isBlank())
-        {
+        if (query == null || query.isBlank()) {
             return Collections.emptyList();
         }
         String lowerQuery = query.trim().toLowerCase();
@@ -85,17 +84,15 @@ public class InMemoryContactRepository implements ContactRepository {
         @Override
         public int compare(Contact c1, Contact c2) {
             int lastNameComparison = c1.getLastName().compareToIgnoreCase(c2.getLastName());
-            if (lastNameComparison != 0)
-            {
+            if (lastNameComparison != 0) {
                 return lastNameComparison;
             }
             int firstNameComparison = c1.getFirstName().compareToIgnoreCase(c2.getFirstName());
-            if (firstNameComparison != 0)
-            {
+            if (firstNameComparison != 0) {
                 return firstNameComparison;
             }
-            String c1Phone = c1.getPhoneNumbers().isEmpty() ? "" : c1.getPhoneNumbers().get(0);
-            String c2Phone = c2.getPhoneNumbers().isEmpty() ? "" : c2.getPhoneNumbers().get(0);
+            String c1Phone = c1.getPhoneNumbers().isEmpty() ? "" : c1.getPhoneNumbers().getFirst();
+            String c2Phone = c2.getPhoneNumbers().isEmpty() ? "" : c2.getPhoneNumbers().getFirst();
             return c1Phone.compareTo(c2Phone);
         }
     }
