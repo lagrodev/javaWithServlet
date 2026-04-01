@@ -2,6 +2,7 @@ package ru.hexaend.entity;
 
 import ru.hexaend.domain.ContactConstrains;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,12 +10,11 @@ import java.util.UUID;
 
 import static ru.hexaend.domain.ContactConstrains.MAX_PHONES;
 
-public class Contact {
+public class Contact extends AbstractEntity<UUID> {
     // по поводу {} - на каких строках, тут не согласен, я ХЗ как будет у меня на раБоте, но знаю нескольких знакомых,
     // в том числе тип, у кого ноут спер, с которого требуют после класса/метода и т.п. нажимать enter и ток потом {
     // так что, это чисто вкусовщина
     // мб, дудовщина с паскаля, хзхзхз
-    private final UUID id;
     private String firstName;
     private String lastName;
     private final List<String> phoneNumbers;
@@ -24,14 +24,31 @@ public class Contact {
     }
 
     public Contact(UUID id, String firstName, String lastName, List<String> phoneNumbers) {
+        super(id);
         validate(
                 firstName, lastName, phoneNumbers
         );
-        this.id = id;
         this.lastName = lastName.trim();
         this.firstName = firstName.trim();
         this.phoneNumbers = new ArrayList<>(phoneNumbers); // это чтобы мы не ссылку переприсвоили, а новый лист кинули в сущность
     }
+
+
+    public Contact(
+            UUID id, String firstName, String lastName,
+            List<String> phoneNumbers,
+            LocalDateTime createdAt, LocalDateTime updatedAt
+    ){
+        super(id, createdAt, updatedAt);
+        validate(
+                firstName, lastName, phoneNumbers
+        );
+        this.lastName = lastName.trim();
+        this.firstName = firstName.trim();
+        this.phoneNumbers = new  ArrayList<>(phoneNumbers);
+
+    }
+
 
     private static void validate(String firstName, String lastName, List<String> phoneNumbers) {
         if (firstName == null || firstName.isBlank())
@@ -61,7 +78,7 @@ public class Contact {
         {
             throw new IllegalArgumentException("Имя не может быть пустым");
         }
-
+        this.markAsUpdated();
         this.firstName = firstName.trim();
     }
 
@@ -74,6 +91,7 @@ public class Contact {
         {
             throw new IllegalArgumentException("Фамилия не может быть пустой");
         }
+        this.markAsUpdated();
         this.lastName = lastName.trim();
     }
 
@@ -97,6 +115,7 @@ public class Contact {
         {
             throw new IllegalArgumentException("Номер телефона не может быть пустым");
         }
+        this.markAsUpdated();
         this.phoneNumbers.add(phoneNumber.trim());
     }
 
@@ -111,6 +130,7 @@ public class Contact {
             throw new IllegalArgumentException("Максимальное количество номеров телефона: " + MAX_PHONES);
         }
         this.phoneNumbers.clear();
+        this.markAsUpdated();
         this.phoneNumbers.addAll(phoneNumbers);
     }
 
