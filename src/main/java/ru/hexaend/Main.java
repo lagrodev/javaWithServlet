@@ -14,17 +14,6 @@ import ru.hexaend.ui.ConsoleUi;
 
 public class Main {
     static void main() {
-        PhoneValidator validator = new PhoneValidatorImpl();
-        ContactRepository repa = new InMemoryContactRepository();
-        PhoneBookService phoneBookService = new PhoneBookServiceImpl(repa, validator);
-        ConsoleUi consoleUi = new ConsoleUi(phoneBookService);
-        consoleUi.start();
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main
-{
-    static void main()
-    {
         String host = env("DB_HOST", "localhost");
         String port = env("DB_PORT", "5432");
         String dbName = env("DB_NAME", "phonebook");
@@ -44,5 +33,11 @@ public class Main
         ui.start();
     }
 
+    private static String env(String name, String defaultValue)
+    {
+        String val = System.getenv(name);
+        return (val != null && !val.isBlank()) ? val : defaultValue;
     }
+
 }
+
