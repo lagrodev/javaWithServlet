@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
+import static ru.hexaend.domain.ContactConstrains.MAX_PHONES;
 
 public class ConsoleHelper {
 
@@ -53,7 +54,7 @@ public class ConsoleHelper {
 
     public List<String> readPhones() {
         List<String> phones = new ArrayList<>();
-        for (int i = 1; i <= Contact.getMaxPhones(); i++) {
+        for (int i = 1; i <= MAX_PHONES; i++) {
             String phone = i == 1
                     ? readNonBlank("  Телефон 1: ")
                     : readLine("  Телефон " + i + " (Enter — пропустить): ");

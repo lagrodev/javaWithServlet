@@ -8,6 +8,8 @@ import ru.hexaend.ui.command.ConsoleHelper;
 import java.util.List;
 import java.util.UUID;
 
+import static ru.hexaend.domain.ContactConstrains.MAX_PHONES;
+
 public class AddPhoneCommand implements Command
 {
 
@@ -30,10 +32,10 @@ public class AddPhoneCommand implements Command
 
         Contact contact = service.getContactById(id);
         System.out.println("  Текущие номера: " + String.join(", ", contact.getPhoneNumbers())
-                + "  (" + contact.getPhoneNumbers().size() + "/" + Contact.getMaxPhones() + ")");
+                + "  (" + contact.getPhoneNumbers().size() + "/" + MAX_PHONES + ")");
 
-        if (contact.getPhoneNumbers().size() >= Contact.getMaxPhones()) {
-            System.out.println("  ✗ Уже достигнут лимит из " + Contact.getMaxPhones() + " номеров.\n");
+        if (contact.getPhoneNumbers().size() >= MAX_PHONES) {
+            System.out.println("  ✗ Уже достигнут лимит из " + MAX_PHONES + " номеров.\n");
             return;
         }
 

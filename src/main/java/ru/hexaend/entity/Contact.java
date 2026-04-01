@@ -1,21 +1,23 @@
 package ru.hexaend.entity;
 
+import ru.hexaend.domain.ContactConstrains;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static ru.hexaend.domain.ContactConstrains.MAX_PHONES;
+
 public class Contact {
+    // по поводу {} - на каких строках, тут не согласен, я ХЗ как будет у меня на раБоте, но знаю нескольких знакомых,
+    // в том числе тип, у кого ноут спер, с которого требуют после класса/метода и т.п. нажимать enter и ток потом {
+    // так что, это чисто вкусовщина
+    // мб, дудовщина с паскаля, хзхзхз
     private final UUID id;
     private String firstName;
     private String lastName;
     private final List<String> phoneNumbers;
-
-    private static final int MAX_PHONES = 3;
-
-    public static int getMaxPhones() {
-        return MAX_PHONES;
-    }
 
     public Contact(String firstName, String lastName, List<String> phoneNumbers) {
         this(UUID.randomUUID(), firstName, lastName, phoneNumbers);
@@ -29,7 +31,6 @@ public class Contact {
         this.lastName = lastName.trim();
         this.firstName = firstName.trim();
         this.phoneNumbers = new ArrayList<>(phoneNumbers); // это чтобы мы не ссылку переприсвоили, а новый лист кинули в сущность
-
     }
 
     private static void validate(String firstName, String lastName, List<String> phoneNumbers) {
@@ -85,7 +86,8 @@ public class Contact {
         return Collections.unmodifiableList(phoneNumbers);
     }
 
-    public void addPhoneNumber(String phoneNumber) // todo тут можно придумать, чтобы проверка была, по правильности ввода номера
+    public void addPhoneNumber(String phoneNumber) // todo тут можно придумать, чтобы проверка была, по правильности ввода номера, как в чистом ddd
+    // но мне впадлу, и это все будет в сервисе :(
     {
         if (phoneNumbers.size() >= MAX_PHONES)
         {

@@ -34,8 +34,7 @@ public class ConsoleUi {
         System.out.println(HEADER);
 
         boolean running = true;
-        while (running)
-        {
+        while (running) {
             printMenu();
             String choice = helper.readLine("Выберите пункт меню: ");
             System.out.println();

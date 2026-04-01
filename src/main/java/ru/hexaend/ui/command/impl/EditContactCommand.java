@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static ru.hexaend.domain.ContactConstrains.MAX_PHONES;
+
 public class EditContactCommand implements Command
 {
 
@@ -54,7 +56,7 @@ public class EditContactCommand implements Command
 
         List<String> phones = new ArrayList<>();
         phones.add(first.trim());
-        for (int i = 2; i <= Contact.getMaxPhones(); i++) {
+        for (int i = 2; i <= MAX_PHONES; i++) {
             String p = helper.readLine("  Телефон " + i + " (Enter — пропустить): ");
             if (p.isBlank()) break;
             phones.add(p.trim());
