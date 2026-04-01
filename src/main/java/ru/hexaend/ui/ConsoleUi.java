@@ -12,11 +12,11 @@ import static ru.hexaend.ui.command.ConsoleHelper.SEPARATOR;
 
 public class ConsoleUi {
 
-    private final ConsoleHelper     helper;
+    private final ConsoleHelper helper;
     private final Map<String, Command> commands;
 
     public ConsoleUi(PhoneBookService service) {
-        this.helper   = new ConsoleHelper(new Scanner(System.in));
+        this.helper = new ConsoleHelper(new Scanner(System.in));
         this.commands = Map.of(
                 "1", new ShowAllCommand(service, helper),
                 "2", new AddContactCommand(service, helper),
@@ -34,16 +34,26 @@ public class ConsoleUi {
         System.out.println(HEADER);
 
         boolean running = true;
-        while (running) {
+        while (running)
+        {
             printMenu();
             String choice = helper.readLine("Выберите пункт меню: ");
             System.out.println();
-            if ("0".equals(choice)) {
+            if ("0".equals(choice))
+            {
                 running = false;
-            } else {
+            }
+            else
+            {
                 Command cmd = commands.get(choice);
-                if (cmd != null) cmd.execute();
-                else System.out.println("  ⚠  Неверный пункт меню. Попробуйте снова.\n");
+                if (cmd != null)
+                {
+                    cmd.execute();
+                }
+                else
+                {
+                    System.out.println("  ⚠  Неверный пункт меню. Попробуйте снова.\n");
+                }
             }
         }
 

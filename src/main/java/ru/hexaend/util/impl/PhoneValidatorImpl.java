@@ -4,15 +4,13 @@ import ru.hexaend.util.PhoneValidator;
 
 import java.util.regex.Pattern;
 
-public class PhoneValidatorImpl implements PhoneValidator
-{
+public class PhoneValidatorImpl implements PhoneValidator {
     private static final Pattern PHONE_PATTERN = Pattern.compile("^[+]?[\\d\\s\\-().]{7,20}$");
 
     private final static int MIN_NUMBERS = 7;
 
     @Override
-    public boolean isValid(String phone)
-    {
+    public boolean isValid(String phone) {
         if (phone == null || phone.isBlank())
         {
             return false;

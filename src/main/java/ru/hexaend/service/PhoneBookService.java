@@ -5,8 +5,7 @@ import ru.hexaend.entity.Contact;
 import java.util.List;
 import java.util.UUID;
 
-public interface PhoneBookService
-{
+public interface PhoneBookService {
     Contact addContact(String firstName, String lastName, List<String> phoneNumbers);
 
     void deleteContact(UUID contactId);

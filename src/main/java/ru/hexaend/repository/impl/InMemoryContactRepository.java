@@ -12,14 +12,12 @@ import java.util.Collections;
 import java.util.Comparator;
 
 
-public class InMemoryContactRepository implements ContactRepository
-{
+public class InMemoryContactRepository implements ContactRepository {
     private final Map<UUID, Contact> storage = new HashMap<>();
 
 
     @Override
-    public void save(Contact contact)
-    {
+    public void save(Contact contact) {
         storage.put(contact.getId(), contact);
     }
 
@@ -34,8 +32,7 @@ public class InMemoryContactRepository implements ContactRepository
     }
 
     @Override
-    public Optional<Contact> findById(UUID id)
-    {
+    public Optional<Contact> findById(UUID id) {
         return Optional.ofNullable(storage.get(id));
     }
 
@@ -47,8 +44,7 @@ public class InMemoryContactRepository implements ContactRepository
     }
 
     @Override
-    public List<Contact> findByLastName(String lastName)
-    {
+    public List<Contact> findByLastName(String lastName) {
         return storage.values().stream()
                 .filter(c -> c.getLastName().equalsIgnoreCase(lastName.trim()))
                 .sorted(ContactComparator.INSTANCE)
@@ -56,8 +52,7 @@ public class InMemoryContactRepository implements ContactRepository
     }
 
     @Override
-    public List<Contact> findByPhoneNumber(String phoneNumber)
-    {
+    public List<Contact> findByPhoneNumber(String phoneNumber) {
         return storage.values().stream()
                 .filter(c -> c.getPhoneNumbers().stream()
                         .anyMatch(p -> p.equals(phoneNumber.trim())))
@@ -66,10 +61,10 @@ public class InMemoryContactRepository implements ContactRepository
     }
 
     @Override
-    public List<Contact> findByFirstNameContainingOrLastNameContaining(String query)
-    {
+    public List<Contact> findByFirstNameContainingOrLastNameContaining(String query) {
 
-        if (query == null || query.isBlank()) {
+        if (query == null || query.isBlank())
+        {
             return Collections.emptyList();
         }
         String lowerQuery = query.trim().toLowerCase();
@@ -86,15 +81,17 @@ public class InMemoryContactRepository implements ContactRepository
 
     private static class ContactComparator implements Comparator<Contact> {
         static final ContactComparator INSTANCE = new ContactComparator();
+
         @Override
-        public int compare(Contact c1, Contact c2)
-        {
+        public int compare(Contact c1, Contact c2) {
             int lastNameComparison = c1.getLastName().compareToIgnoreCase(c2.getLastName());
-            if (lastNameComparison != 0) {
+            if (lastNameComparison != 0)
+            {
                 return lastNameComparison;
             }
             int firstNameComparison = c1.getFirstName().compareToIgnoreCase(c2.getFirstName());
-            if (firstNameComparison != 0) {
+            if (firstNameComparison != 0)
+            {
                 return firstNameComparison;
             }
             String c1Phone = c1.getPhoneNumbers().isEmpty() ? "" : c1.getPhoneNumbers().get(0);

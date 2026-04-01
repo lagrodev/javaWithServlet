@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface MyRepository <E, ID>
-{
+public interface MyRepository<E, ID> {
     void save(E entity);
 
     void delete(E entity);
+
     void deleteById(ID id);
 
     Optional<Contact> findById(ID id);

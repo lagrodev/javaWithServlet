@@ -12,7 +12,7 @@ public class AppError {
     private Instant timestamp;
     private Map<String, String> validationErrors;
 
-    public AppError(String error, String message, int status){
+    public AppError(String error, String message, int status) {
         this.timestamp = Instant.now();
         this.status = status;
         this.message = message;
@@ -25,53 +25,43 @@ public class AppError {
         this.validationErrors = validationErrors;
     }
 
-    public int getStatus()
-    {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(int status)
-    {
+    public void setStatus(int status) {
         this.status = status;
     }
 
-    public String getError()
-    {
+    public String getError() {
         return error;
     }
 
-    public void setError(String error)
-    {
+    public void setError(String error) {
         this.error = error;
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message)
-    {
+    public void setMessage(String message) {
         this.message = message;
     }
 
-    public Instant getTimestamp()
-    {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Instant timestamp)
-    {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 
-    public Map<String, String> getValidationErrors()
-    {
+    public Map<String, String> getValidationErrors() {
         return validationErrors;
     }
 
-    public void setValidationErrors(Map<String, String> validationErrors)
-    {
+    public void setValidationErrors(Map<String, String> validationErrors) {
         this.validationErrors = validationErrors;
     }
 }
