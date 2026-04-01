@@ -5,6 +5,7 @@ import ru.hexaend.repository.ContactRepository;
 import ru.hexaend.repository.jdbc.DataSourceProvider;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -31,11 +32,12 @@ public class JdbcContactRepository implements ContactRepository
     public void save(Contact contact)
     {
         String upsertContact = """
-                INSERT INTO contacts (id, first_name, last_name)
-                VALUES (?, ?, ?)
+                INSERT INTO contacts (id, first_name, last_name, created_at, updated_at)
+                VALUES (?, ?, ?,?,?)
                 ON CONFLICT(id) DO UPDATE
                     SET first_name = excluded.first_name,
-                        last_name  = excluded.last_name
+                        last_name  = excluded.last_name,
+                        updated_at = excluded.updated_at
                 """;
         String deletePhones = "DELETE FROM phone_numbers WHERE contact_id = ?";
         String insertPhone = "INSERT INTO phone_numbers (contact_id, phone) VALUES (?, ?)";
@@ -51,6 +53,8 @@ public class JdbcContactRepository implements ContactRepository
                     ps.setString(1, idStr);
                     ps.setString(2, contact.getFirstName());
                     ps.setString(3, contact.getLastName());
+                    ps.setTimestamp(4, Timestamp.valueOf(contact.getCreatedAt()));
+                    ps.setTimestamp(5, Timestamp.valueOf(contact.getUpdatedAt()));
                     ps.executeUpdate();
                 }
                 try (PreparedStatement ps = conn.prepareStatement(deletePhones))
@@ -102,13 +106,12 @@ public class JdbcContactRepository implements ContactRepository
         }
     }
 
-    // ─── Find by ID ──────────────────────────────────────────────────────────
 
     @Override
     public Optional<Contact> findById(UUID id)
     {
         String sql = """
-                SELECT c.id, c.first_name, c.last_name, p.phone
+                SELECT c.id, c.first_name, c.last_name, p.phone, c.created_at, c.updated_at
                 FROM contacts c
                 LEFT JOIN phone_numbers p ON p.contact_id = c.id
                 WHERE c.id = ?
@@ -128,13 +131,12 @@ public class JdbcContactRepository implements ContactRepository
         }
     }
 
-    // ─── Find all ────────────────────────────────────────────────────────────
 
     @Override
     public List<Contact> findAll()
     {
         String sql = """
-                SELECT c.id, c.first_name, c.last_name, p.phone
+                SELECT c.id, c.first_name, c.last_name, p.phone, c.created_at, c.updated_at
                 FROM contacts c
                 LEFT JOIN phone_numbers p ON p.contact_id = c.id
                 ORDER BY LOWER(c.last_name), LOWER(c.first_name), p.phone
@@ -142,13 +144,12 @@ public class JdbcContactRepository implements ContactRepository
         return queryContacts(sql);
     }
 
-    // ─── Find by last name ───────────────────────────────────────────────────
 
     @Override
     public List<Contact> findByLastName(String lastName)
     {
         String sql = """
-                SELECT c.id, c.first_name, c.last_name, p.phone
+                SELECT c.id, c.first_name, c.last_name, p.phone,  c.created_at, c.updated_at
                 FROM contacts c
                 LEFT JOIN phone_numbers p ON p.contact_id = c.id
                 WHERE LOWER(c.last_name) LIKE ?
@@ -168,13 +169,12 @@ public class JdbcContactRepository implements ContactRepository
         }
     }
 
-    // ─── Find by phone ───────────────────────────────────────────────────────
 
     @Override
     public List<Contact> findByPhoneNumber(String phoneNumber)
     {
         String sql = """
-                SELECT c.id, c.first_name, c.last_name, p.phone
+                SELECT c.id, c.first_name, c.last_name, p.phone, c.created_at, c.updated_at
                 FROM contacts c
                 JOIN phone_numbers p ON p.contact_id = c.id
                 WHERE p.phone LIKE ?
@@ -198,7 +198,7 @@ public class JdbcContactRepository implements ContactRepository
     public List<Contact> findByFirstNameContainingOrLastNameContaining(String query)
     {
         String sql = """
-                SELECT c.id, c.first_name, c.last_name, p.phone
+                SELECT c.id, c.first_name, c.last_name, p.phone,  c.created_at, c.updated_at
                 FROM contacts c
                 LEFT JOIN phone_numbers p ON p.contact_id = c.id
                 WHERE LOWER(c.first_name) LIKE ? OR LOWER(c.last_name) LIKE ?
@@ -220,7 +220,6 @@ public class JdbcContactRepository implements ContactRepository
         }
     }
 
-    // ─── Mapping helpers ─────────────────────────────────────────────────────
 
     private List<Contact> queryContacts(String sql)
     {
@@ -248,7 +247,9 @@ public class JdbcContactRepository implements ContactRepository
                     return new ContactBuilder(
                             UUID.fromString(rs.getString("id")),
                             rs.getString("first_name"),
-                            rs.getString("last_name"));
+                            rs.getString("last_name"),
+                            rs.getTimestamp("created_at").toLocalDateTime(),
+                            rs.getTimestamp("updated_at").toLocalDateTime());
                 } catch (SQLException e)
                 {
                     throw new RuntimeException(e);
@@ -283,12 +284,16 @@ public class JdbcContactRepository implements ContactRepository
         final String firstName;
         final String lastName;
         final List<String> phones = new ArrayList<>();
+        final LocalDateTime createdAt;
+        final LocalDateTime updatedAt;
 
-        ContactBuilder(UUID id, String firstName, String lastName)
+        ContactBuilder(UUID id, String firstName, String lastName, LocalDateTime createdAt, LocalDateTime updatedAt)
         {
             this.id = id;
             this.firstName = firstName;
             this.lastName = lastName;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
         }
 
         void addPhone(String phone)

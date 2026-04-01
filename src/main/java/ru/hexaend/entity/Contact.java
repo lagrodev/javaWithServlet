@@ -14,7 +14,7 @@ public class Contact extends AbstractEntity<UUID> {
     // по поводу {} - на каких строках, тут не согласен, я ХЗ как будет у меня на раБоте, но знаю нескольких знакомых,
     // в том числе тип, у кого ноут спер, с которого требуют после класса/метода и т.п. нажимать enter и ток потом {
     // так что, это чисто вкусовщина
-    // мб, дудовщина с паскаля, хзхзхз
+    // мб, дeдовщина с паскаля, хзхзхз
     private String firstName;
     private String lastName;
     private final List<String> phoneNumbers;
