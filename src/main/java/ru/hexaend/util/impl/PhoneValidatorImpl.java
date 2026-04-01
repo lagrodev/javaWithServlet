@@ -4,10 +4,11 @@ import ru.hexaend.util.PhoneValidator;
 
 import java.util.regex.Pattern;
 
+import static ru.hexaend.domain.ContactConstrains.MIN_NUMBERS_IN_PHONE;
+
 public class PhoneValidatorImpl implements PhoneValidator {
     private static final Pattern PHONE_PATTERN = Pattern.compile("^[+]?[\\d\\s\\-().]{7,20}$");
 
-    private final static int MIN_NUMBERS = 7;
 
     @Override
     public boolean isValid(String phone) {
@@ -24,6 +25,6 @@ public class PhoneValidatorImpl implements PhoneValidator {
         long digitsCount = trimmed.chars()
                 .filter(Character::isDigit)
                 .count();
-        return digitsCount >= MIN_NUMBERS;
+        return digitsCount >= MIN_NUMBERS_IN_PHONE;
     }
 }
