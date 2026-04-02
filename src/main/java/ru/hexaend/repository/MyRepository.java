@@ -1,11 +1,9 @@
 package ru.hexaend.repository;
 
 import ru.hexaend.entity.AbstractEntity;
-import ru.hexaend.entity.Contact;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface MyRepository<E extends AbstractEntity<ID>, ID> {
     void save(E entity);
