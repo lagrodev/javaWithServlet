@@ -1,20 +1,14 @@
-# ─── Build stage ─────────────────────────────────────────────
-FROM eclipse-temurin:21-jdk AS builder
+FROM gradle:8.7-jdk21 AS builder
+
 WORKDIR /app
+COPY . .
+RUN gradle war --no-daemon
 
-COPY build.gradle.kts settings.gradle.kts ./
-COPY gradle ./gradle
-COPY src ./src
 
-RUN ./gradlew build --no-daemon -x test
+FROM tomcat:10.1-jdk21-temurin
 
-# ─── Runtime stage ───────────────────────────────────────────
-FROM eclipse-temurin:21-jre
-WORKDIR /app
+RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Копируем собранный JAR и драйвер
-COPY --from=builder /app/build/libs/*.jar app.jar
-RUN wget -q https://jdbc.postgresql.org/download/postgresql-42.7.3.jar -O postgresql.jar
+COPY --from=builder /app/build/libs/*.war /usr/local/tomcat/webapps/ROOT.war
 
-# Исправь package на свой!
-CMD ["java", "-cp", "app.jar:postgresql.jar", "ru.hexaend.Main"]
+EXPOSE 8080

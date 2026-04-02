@@ -1,6 +1,8 @@
 package ru.hexaend.service.impl;
 
 import ru.hexaend.entity.Contact;
+import ru.hexaend.ex.custom.ContactNotFoundException;
+import ru.hexaend.ex.custom.ValidationException;
 import ru.hexaend.repository.ContactRepository;
 import ru.hexaend.service.PhoneBookService;
 import ru.hexaend.util.PhoneValidator;
@@ -31,14 +33,14 @@ public class PhoneBookServiceImpl implements PhoneBookService {
     @Override
     public void deleteContact(UUID contactId) {
         contactRepository.findById(contactId).orElseThrow(() ->
-                new RuntimeException("Contact with id " + contactId + " not found"));
+                new ContactNotFoundException("Contact with id " + contactId + " not found"));
         contactRepository.deleteById(contactId);
     }
 
     @Override
     public Contact editContact(UUID contactId, String firstName, String lastName, List<String> phoneNumbers) {
         Contact contact = contactRepository.findById(contactId).orElseThrow(
-                () -> new RuntimeException("Contact with id " + contactId + " not found")
+                () -> new ContactNotFoundException("Contact with id " + contactId + " not found")
         );
         validatePhoneNumber(phoneNumbers);
         contact.setLastName(lastName);
@@ -53,11 +55,11 @@ public class PhoneBookServiceImpl implements PhoneBookService {
     public Contact addPhoneNumber(UUID contactId, String phoneNumber) {
         Contact contact = contactRepository.findById(
                 contactId
-        ).orElseThrow(() -> new RuntimeException("Contact with id " + contactId + " not found"));
+        ).orElseThrow(() -> new ContactNotFoundException("Contact with id " + contactId + " not found"));
 
         if (!phoneValidator.isValid(phoneNumber))
         {
-            throw new IllegalArgumentException(
+            throw new ValidationException(
                     "Phone number " + phoneNumber + " is invalid"
             );
         }
@@ -103,20 +105,20 @@ public class PhoneBookServiceImpl implements PhoneBookService {
     @Override
     public Contact getContactById(UUID contactId) {
         return contactRepository.findById(contactId).orElseThrow(
-                () -> new RuntimeException("Contact with id " + contactId + " not found")
+                () -> new ContactNotFoundException("Contact with id " + contactId + " not found")
         );
     }
 
     private void validatePhoneNumber(List<String> phoneNumbers) {
         if (phoneNumbers == null || phoneNumbers.isEmpty())
         {
-            throw new IllegalArgumentException("Phone number is empty");
+            throw new ValidationException("Phone number is empty");
         }
         for (String phoneNumber : phoneNumbers)
         {
             if (!phoneValidator.isValid(phoneNumber))
             {
-                throw new IllegalArgumentException("Phone number is invalid");
+                throw new ValidationException("Phone number is invalid");
             }
         }
     }
