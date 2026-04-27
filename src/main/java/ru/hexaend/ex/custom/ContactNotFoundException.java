@@ -1,6 +1,7 @@
 package ru.hexaend.ex.custom;
 
 import ru.hexaend.ex.ApplicationException;
+import ru.hexaend.ex.HttpError;
 
 /**
  * Исключение, выбрасываемое при попытке обращения к несуществующему контакту.
@@ -14,6 +15,6 @@ public class ContactNotFoundException extends ApplicationException {
      * @param message описание ошибки (например, {@code "Contact with id ... not found"})
      */
     public ContactNotFoundException(String message) {
-        super(message, 404);
+        super(message, HttpError.NOT_FOUND);
     }
 }

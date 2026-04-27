@@ -21,14 +21,13 @@ public class AppError {
     private final Map<String, String> validationErrors;
 
     /**
-     * Создаёт объект ошибки без деталей валидации.
+     * Создаёт объект ошибки на основе {@link HttpError}.
      *
-     * @param error   краткое наименование ошибки (например, {@code "Not Found"})
-     * @param message описание ошибки для пользователя
-     * @param status  HTTP-статус код
+     * @param httpError тип HTTP-ошибки
+     * @param message   описание ошибки для пользователя
      */
-    public AppError(String error, String message, int status) {
-        this(error, message, status, Collections.emptyMap());
+    public AppError(HttpError httpError, String message) {
+        this(httpError.code(), message, httpError.statusCode(), Collections.emptyMap());
     }
 
     /**

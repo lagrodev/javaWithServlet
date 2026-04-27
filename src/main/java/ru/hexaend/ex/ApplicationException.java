@@ -1,7 +1,7 @@
 package ru.hexaend.ex;
 
 /**
- * Базовое исключение приложения, несущее HTTP-статус код.
+ * Базовое исключение приложения, несущее {@link HttpError}.
  *
  * <p>Все бизнес-исключения наследуются от этого класса.
  * {@link ErrorFilter} перехватывает их и формирует ответ
@@ -11,21 +11,38 @@ package ru.hexaend.ex;
  */
 public abstract class ApplicationException extends RuntimeException {
 
-    private final int status;
+    private final HttpError httpError;
 
     /**
-     * @param message описание ошибки для пользователя
-     * @param status  HTTP-статус код (например, 400, 404)
+     * @param message   описание ошибки для пользователя
+     * @param httpError тип HTTP-ошибки
      */
-    protected ApplicationException(String message, int status) {
+    protected ApplicationException(String message, HttpError httpError) {
         super(message);
-        this.status = status;
+        this.httpError = httpError;
     }
 
     /**
-     * @return HTTP-статус код, связанный с данным исключением
+     * @param message   описание ошибки для пользователя
+     * @param cause     исходное исключение
+     * @param httpError тип HTTP-ошибки
+     */
+    protected ApplicationException(String message, Throwable cause, HttpError httpError) {
+        super(message, cause);
+        this.httpError = httpError;
+    }
+
+    /**
+     * @return тип HTTP-ошибки, связанный с данным исключением
+     */
+    public HttpError getHttpError() {
+        return httpError;
+    }
+
+    /**
+     * @return числовой HTTP-статус код
      */
     public int getStatus() {
-        return status;
+        return httpError.statusCode();
     }
 }

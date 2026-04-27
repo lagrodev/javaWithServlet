@@ -1,5 +1,6 @@
 package ru.hexaend.repository.jdbc.query;
 
+import ru.hexaend.ex.custom.DatabaseException;
 import ru.hexaend.repository.jdbc.DataSourceProvider;
 import ru.hexaend.repository.jdbc.mapper.RowMapper;
 
@@ -55,7 +56,7 @@ public class QueryExecutor {
             }
             return list;
         } catch (SQLException e) {
-            throw new RuntimeException("Ошибка выполнения запроса: " + sql, e);
+            throw new DatabaseException("Ошибка выполнения запроса: " + sql, e);
         }
     }
 
@@ -67,12 +68,12 @@ public class QueryExecutor {
      * @param params параметры запроса
      * @param <T>    тип результирующего объекта
      * @return {@link Optional} с объектом, или пустой
-     * @throws RuntimeException если запрос вернул более одной строки
+     * @throws DatabaseException если запрос вернул более одной строки
      */
     public <T> Optional<T> queryOne(String sql, RowMapper<T> mapper, Object... params) {
         final List<T> list = queryList(sql, mapper, params);
         if (list.size() > 1) {
-            throw new RuntimeException("Ожидалась одна запись, получено: " + list.size());
+            throw new DatabaseException("Ожидалась одна запись, получено: " + list.size());
         }
         return list.isEmpty() ? Optional.empty() : Optional.of(list.getFirst());
     }
@@ -89,7 +90,7 @@ public class QueryExecutor {
              final PreparedStatement ps = prepare(conn, sql, params)) {
             return ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Ошибка выполнения update: " + sql, e);
+            throw new DatabaseException("Ошибка выполнения update: " + sql, e);
         }
     }
 

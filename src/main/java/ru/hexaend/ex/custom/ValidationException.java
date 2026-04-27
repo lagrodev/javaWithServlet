@@ -1,6 +1,7 @@
 package ru.hexaend.ex.custom;
 
 import ru.hexaend.ex.ApplicationException;
+import ru.hexaend.ex.HttpError;
 
 /**
  * Исключение, выбрасываемое при нарушении правил валидации входных данных.
@@ -14,6 +15,6 @@ public class ValidationException extends ApplicationException {
      * @param message описание нарушения валидации
      */
     public ValidationException(String message) {
-        super(message, 400);
+        super(message, HttpError.BAD_REQUEST);
     }
 }

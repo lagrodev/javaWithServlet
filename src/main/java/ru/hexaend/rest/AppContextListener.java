@@ -2,6 +2,7 @@ package ru.hexaend.rest;
 
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
+import ru.hexaend.ex.custom.DatabaseException;
 import ru.hexaend.repository.ContactRepository;
 import ru.hexaend.repository.impl.JdbcContactRepository;
 import ru.hexaend.repository.jdbc.DataSourceProvider;
@@ -49,7 +50,7 @@ public class AppContextListener implements ServletContextListener {
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("PostgreSQL драйвер не найден", e);
+            throw new DatabaseException("PostgreSQL драйвер не найден", e);
         }
         final String host = env("DB_HOST", "localhost");
         final String port = env("DB_PORT", "5432");

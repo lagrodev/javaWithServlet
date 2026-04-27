@@ -1,5 +1,7 @@
 package ru.hexaend.repository.jdbc;
 
+import ru.hexaend.ex.custom.DatabaseException;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -31,7 +33,7 @@ public class SchemaInitializer {
     /**
      * Выполняет DDL-скрипты для создания таблиц.
      *
-     * @throws RuntimeException если не удалось выполнить DDL
+     * @throws DatabaseException если не удалось выполнить DDL
      */
     public void initialize() {
         String createContacts = """
@@ -60,7 +62,7 @@ public class SchemaInitializer {
             LOG.info("Схема БД инициализирована успешно");
         } catch (SQLException e) {
             LOG.log(Level.SEVERE, "Ошибка инициализации схемы БД", e);
-            throw new RuntimeException("Ошибка инициализации схемы БД", e);
+            throw new DatabaseException("Ошибка инициализации схемы БД", e);
         }
     }
 }

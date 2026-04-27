@@ -1,6 +1,7 @@
 package ru.hexaend.repository.impl;
 
 import ru.hexaend.entity.Contact;
+import ru.hexaend.ex.custom.DatabaseException;
 import ru.hexaend.repository.ContactRepository;
 import ru.hexaend.repository.jdbc.DataSourceProvider;
 
@@ -113,7 +114,7 @@ public class JdbcContactRepository implements ContactRepository {
                 throw e;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Ошибка сохранения контакта", e);
+            throw new DatabaseException("Ошибка сохранения контакта", e);
         }
     }
 
@@ -140,7 +141,7 @@ public class JdbcContactRepository implements ContactRepository {
             ps.setString(1, id.toString());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Ошибка удаления контакта", e);
+            throw new DatabaseException("Ошибка удаления контакта", e);
         }
     }
 
@@ -179,7 +180,7 @@ public class JdbcContactRepository implements ContactRepository {
         final String sql = "SELECT " + SELECT_COLUMNS + " " + FROM_WITH_PHONES
                 + " WHERE c.id = ? ORDER BY p.id";
         final List<Contact> list = queryWithPhones(sql, id.toString());
-        return list.isEmpty() ? Optional.empty() : Optional.of(list.getFirst());
+        return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
 
     /**
@@ -227,7 +228,7 @@ public class JdbcContactRepository implements ContactRepository {
                 return mapContacts(rs);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Ошибка запроса контактов", e);
+            throw new DatabaseException("Ошибка запроса контактов", e);
         }
     }
 
@@ -251,7 +252,7 @@ public class JdbcContactRepository implements ContactRepository {
                             rs.getTimestamp("created_at").toLocalDateTime(),
                             rs.getTimestamp("updated_at").toLocalDateTime());
                 } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    throw new DatabaseException("Ошибка чтения данных контакта", e);
                 }
             });
             if (phone != null) {
