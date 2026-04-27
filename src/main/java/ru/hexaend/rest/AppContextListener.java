@@ -1,30 +1,49 @@
 package ru.hexaend.rest;
 
-
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
-import jakarta.servlet.http.HttpSessionAttributeListener;
-import jakarta.servlet.http.HttpSessionBindingEvent;
-import jakarta.servlet.http.HttpSessionEvent;
-import jakarta.servlet.http.HttpSessionListener;
 import ru.hexaend.repository.ContactRepository;
 import ru.hexaend.repository.impl.JdbcContactRepository;
 import ru.hexaend.repository.jdbc.DataSourceProvider;
 import ru.hexaend.repository.jdbc.SchemaInitializer;
-import ru.hexaend.repository.jdbc.impl.SingleConnectionDataSourceProvider;
+import ru.hexaend.repository.jdbc.impl.DriverManagerDataSourceProvider;
 import ru.hexaend.service.PhoneBookService;
 import ru.hexaend.service.impl.PhoneBookServiceImpl;
 import ru.hexaend.util.PhoneValidator;
 import ru.hexaend.util.impl.PhoneValidatorImpl;
 
-
+/**
+ * Слушатель жизненного цикла Servlet-контекста.
+ *
+ * <p>При старте приложения:
+ * <ol>
+ *   <li>Загружает JDBC-драйвер PostgreSQL.</li>
+ *   <li>Читает параметры подключения к БД из переменных окружения.</li>
+ *   <li>Инициализирует схему БД через {@link SchemaInitializer}.</li>
+ *   <li>Создаёт и публикует {@link PhoneBookService} в {@code ServletContext}.</li>
+ * </ol>
+ * При остановке — удаляет сервис из контекста.</p>
+ *
+ * @author Vasily Melnik
+ */
 public class AppContextListener implements ServletContextListener {
 
-    public AppContextListener() {
+    /**
+     * Возвращает значение переменной окружения или значение по умолчанию.
+     *
+     * @param name         имя переменной окружения
+     * @param defaultValue значение по умолчанию
+     * @return значение переменной или {@code defaultValue}
+     */
+    private static String env(String name, String defaultValue) {
+        final String val = System.getenv(name);
+        return (val != null && !val.isBlank()) ? val : defaultValue;
     }
 
-
-
+    /**
+     * Инициализирует приложение: подключение к БД, миграция схемы,
+     * создание сервисного слоя и публикация в {@code ServletContext}.
+     */
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         try {
@@ -32,34 +51,30 @@ public class AppContextListener implements ServletContextListener {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("PostgreSQL драйвер не найден", e);
         }
-        String host = env("DB_HOST", "localhost");
-        String port = env("DB_PORT", "5432");
-        String dbName = env("DB_NAME", "phonebook");
-        String user = env("DB_USER", "phonebook");
-        String password = env("DB_PASSWORD", "phonebook");
+        final String host = env("DB_HOST", "localhost");
+        final String port = env("DB_PORT", "5432");
+        final String dbName = env("DB_NAME", "phonebook");
+        final String user = env("DB_USER", "phonebook");
+        final String password = env("DB_PASSWORD", "phonebook");
 
-        String url = String.format("jdbc:postgresql://%s:%s/%s", host, port, dbName);
+        final String url = String.format("jdbc:postgresql://%s:%s/%s", host, port, dbName);
 
-        DataSourceProvider ds = new SingleConnectionDataSourceProvider(url, user, password);
+        final DataSourceProvider ds = new DriverManagerDataSourceProvider(url, user, password);
         new SchemaInitializer(ds).initialize();
 
-        PhoneValidator validator = new PhoneValidatorImpl();
-        ContactRepository repo = new JdbcContactRepository(ds);
-        PhoneBookService service = new PhoneBookServiceImpl(
+        final PhoneValidator validator = new PhoneValidatorImpl();
+        final ContactRepository repo = new JdbcContactRepository(ds);
+        final PhoneBookService service = new PhoneBookServiceImpl(
                 repo, validator
         );
         sce.getServletContext().setAttribute("service", service);
     }
 
+    /**
+     * Освобождает ресурсы при остановке приложения.
+     */
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         sce.getServletContext().removeAttribute("service");
-    }
-
-
-    private static String env(String name, String defaultValue)
-    {
-        String val = System.getenv(name);
-        return (val != null && !val.isBlank()) ? val : defaultValue;
     }
 }

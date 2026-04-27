@@ -12,57 +12,94 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Исполнитель SQL-запросов поверх {@link DataSourceProvider}.
+ *
+ * <p>Инкапсулирует получение соединения, подготовку {@link PreparedStatement},
+ * маппинг результатов и корректное освобождение ресурсов.</p>
+ *
+ * @author Vasily Melnik
+ */
 public class QueryExecutor {
+
     private final DataSourceProvider ds;
 
+    /**
+     * @param ds провайдер JDBC-соединений
+     */
     public QueryExecutor(DataSourceProvider ds) {
-        this.ds = ds;
+        this.ds = Objects.requireNonNull(ds, "DataSourceProvider must not be null");
     }
 
-    public <T>List<T> queryList(String sql, RowMapper<T> mapper, Object... params) {
+    /**
+     * Выполняет SELECT-запрос и возвращает список объектов.
+     *
+     * @param sql    SQL-запрос с плейсхолдерами {@code ?}
+     * @param mapper маппер строки результата в объект
+     * @param params параметры запроса (подставляются вместо {@code ?})
+     * @param <T>    тип результирующего объекта
+     * @return список объектов (может быть пустым)
+     */
+    public <T> List<T> queryList(String sql, RowMapper<T> mapper, Object... params) {
         Objects.requireNonNull(sql, "sql is null");
         Objects.requireNonNull(mapper, "mapper is null");
-        Objects.requireNonNull(params, "param is null");
-        try (Connection conn = ds.getConnection()) {
+        Objects.requireNonNull(params, "params is null");
 
-            PreparedStatement ps = prepare(conn, sql, params);
-            ResultSet rs = ps.executeQuery();
+        try (final Connection conn = ds.getConnection();
+             final PreparedStatement ps = prepare(conn, sql, params);
+             final ResultSet rs = ps.executeQuery()) {
 
-            List<T> list = new ArrayList<>();
+            final List<T> list = new ArrayList<>();
             while (rs.next()) {
                 list.add(mapper.mapRow(rs));
             }
             return list;
-
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException("Ошибка выполнения запроса: " + sql, e);
         }
     }
 
-    public <T> Optional<T> queryOne(String sql, RowMapper<T> mapper, Object... params)  {
-        List<T> list = queryList(sql, mapper, params);
+    /**
+     * Выполняет SELECT-запрос, ожидая не более одной строки.
+     *
+     * @param sql    SQL-запрос с плейсхолдерами {@code ?}
+     * @param mapper маппер строки результата в объект
+     * @param params параметры запроса
+     * @param <T>    тип результирующего объекта
+     * @return {@link Optional} с объектом, или пустой
+     * @throws RuntimeException если запрос вернул более одной строки
+     */
+    public <T> Optional<T> queryOne(String sql, RowMapper<T> mapper, Object... params) {
+        final List<T> list = queryList(sql, mapper, params);
         if (list.size() > 1) {
             throw new RuntimeException("Ожидалась одна запись, получено: " + list.size());
         }
         return list.isEmpty() ? Optional.empty() : Optional.of(list.getFirst());
     }
 
-    public int update(String sql, Object... params){
-        try (Connection conn = ds.getConnection()) {
-            PreparedStatement ps = prepare(conn, sql, params);
+    /**
+     * Выполняет INSERT/UPDATE/DELETE запрос.
+     *
+     * @param sql    SQL-запрос с плейсхолдерами {@code ?}
+     * @param params параметры запроса
+     * @return количество затронутых строк
+     */
+    public int update(String sql, Object... params) {
+        try (final Connection conn = ds.getConnection();
+             final PreparedStatement ps = prepare(conn, sql, params)) {
             return ps.executeUpdate();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException("Ошибка выполнения update: " + sql, e);
         }
     }
 
-
-    private PreparedStatement prepare(Connection conn, String sql, Object[] param) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement(sql);
-        for (int i = 0; i < param.length; i++) {
-            ps.setObject(i + 1, param[i]);
+    /**
+     * Создаёт {@link PreparedStatement} и подставляет параметры.
+     */
+    private PreparedStatement prepare(Connection conn, String sql, Object[] params) throws SQLException {
+        final PreparedStatement ps = conn.prepareStatement(sql);
+        for (int i = 0; i < params.length; i++) {
+            ps.setObject(i + 1, params[i]);
         }
         return ps;
     }

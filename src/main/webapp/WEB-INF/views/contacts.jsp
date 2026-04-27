@@ -7,7 +7,12 @@
 <a href="${pageContext.request.contextPath}/contacts/form">+ Добавить</a>
 
 <table border="1">
-    <tr><th>Фамилия</th><th>Имя</th><th>Телефоны</th><th></th></tr>
+    <tr>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Телефоны</th>
+        <th></th>
+    </tr>
     <c:forEach var="c" items="${contacts}">
         <tr>
             <td>${c.lastName}</td>

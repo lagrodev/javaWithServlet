@@ -4,12 +4,39 @@
 <head>
     <title>${empty contact ? 'Новый контакт' : 'Редактирование'}</title>
     <style>
-        body { font-family: sans-serif; max-width: 500px; margin: 40px auto; }
-        label { display: block; margin-top: 12px; font-weight: bold; }
-        input[type=text] { width: 100%; padding: 6px; margin-top: 4px; box-sizing: border-box; }
-        .hint { font-size: 12px; color: #888; }
-        button { margin-top: 16px; padding: 8px 20px; }
-        a { display: inline-block; margin-top: 12px; }
+        body {
+            font-family: sans-serif;
+            max-width: 500px;
+            margin: 40px auto;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+
+        input[type=text] {
+            width: 100%;
+            padding: 6px;
+            margin-top: 4px;
+            box-sizing: border-box;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #888;
+        }
+
+        button {
+            margin-top: 16px;
+            padding: 8px 20px;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 12px;
+        }
     </style>
 </head>
 <body>

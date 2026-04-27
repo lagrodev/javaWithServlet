@@ -10,43 +10,69 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Обработчик вызовов для динамического прокси репозитория.
+ *
+ * <p>Реализует паттерн Dynamic Proxy: перехватывает вызовы методов
+ * интерфейса репозитория, извлекает SQL из аннотации {@link Query},
+ * маппер из {@link Mapper} и делегирует выполнение в {@link QueryExecutor}.</p>
+ *
+ * <p>Тип возвращаемого значения метода определяет стратегию выполнения:
+ * {@code List} — queryList, {@code Optional} — queryOne,
+ * {@code int/Integer} — update, {@code void} — update без возврата.</p>
+ *
+ * @param <T> тип сущности репозитория
+ * @author Vasily Melnik
+ */
 public class RepositoryInvocationHandler<T> implements InvocationHandler {
 
     private final QueryExecutor executor;
 
+    /**
+     * @param executor исполнитель SQL-запросов
+     */
     public RepositoryInvocationHandler(QueryExecutor executor) {
         this.executor = executor;
     }
 
     /**
-     * короче, тут я запарился, так что, спер идею с использованием enum для "полиморфизма"
-     * (тут Борисов должен был биться в экстазе), вместо 5 if
-     * и потом спер идею Косенко: определить в Map класс возвращаемого типа (он говорил, что в gameDev такое практикуют)
-     * ток он говорил, что в Map прописывают все интерфейсы, которые нужны? юзаются?
-     * чет такое, слушать надо было :(
-     * в общем, если тип возвращаемого значения не поддерживается, то кидаем UnsupportedOperationException
+     * Обрабатывает вызов метода прокси-репозитория.
+     *
+     * <p>Алгоритм:
+     * <ol>
+     *   <li>Методы {@link Object} (toString, equals, hashCode) делегируются напрямую.</li>
+     *   <li>Извлекаются аннотации {@link Query} и {@link Mapper} с вызванного метода.</li>
+     *   <li>По типу возвращаемого значения определяется стратегия выполнения
+     *       ({@code List}, {@code Optional}, {@code int/void}) через enum {@link ReturnedType}.</li>
+     *   <li>Запрос выполняется через {@link QueryExecutor} с соответствующим маппером.</li>
+     * </ol></p>
+     *
+     * @throws UnsupportedOperationException если метод не аннотирован {@link Query}/{@link Mapper}
+     *                                       или тип возвращаемого значения не поддерживается
      */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (method.getDeclaringClass() == Object.class) { // короче, метод класса obj просто вызываем, не обрабатывая
+        // Методы Object (toString, equals, hashCode) вызываем напрямую
+        if (method.getDeclaringClass() == Object.class) {
             return method.invoke(this, args);
         }
-        Query queryAnnotation = method.getAnnotation(Query.class);
-        Mapper mapperAnnotation = method.getAnnotation(Mapper.class);
+        final Query queryAnnotation = method.getAnnotation(Query.class);
+        final Mapper mapperAnnotation = method.getAnnotation(Mapper.class);
+
         if (queryAnnotation == null) {
             throw new UnsupportedOperationException(
                     "Метод " + method.getName() + " не аннотирован @Query");
         }
         if (mapperAnnotation == null) {
-            throw  new UnsupportedOperationException(
+            throw new UnsupportedOperationException(
                     "Метод " + method.getName() + " не аннотирован @Mapper, нужно указать класс Маппера для Маппинга" +
                             " результата запроса"
             );
         }
 
-        String sql = queryAnnotation.value();
-        Class<? extends RowMapper<?>> mapperClass = mapperAnnotation.value();
-        RowMapper<?> rowMapper = mapperClass.getDeclaredConstructor().newInstance();
+        final String sql = queryAnnotation.value();
+        final Class<? extends RowMapper<?>> mapperClass = mapperAnnotation.value();
+        final RowMapper<?> rowMapper = mapperClass.getDeclaredConstructor().newInstance();
 
         return ReturnedType.of(method).run(executor, sql, rowMapper, args);
 
@@ -54,33 +80,35 @@ public class RepositoryInvocationHandler<T> implements InvocationHandler {
 
     private enum ReturnedType {
         LIST {
-                @Override
-                public Object run(QueryExecutor e, String s, RowMapper<?> m, Object[] a) {
-                        return e.queryList(s, m, a);
-                    }
-                },
+            @Override
+            public Object run(QueryExecutor e, String s, RowMapper<?> m, Object[] a) {
+                return e.queryList(s, m, a);
+            }
+        },
         OPTIONAL {
-                    @Override
-                    public Object run(QueryExecutor e, String s, RowMapper<?> m, Object[] a) {
-                        return e.queryOne(s, m, a);
-                    }
-                },
+            @Override
+            public Object run(QueryExecutor e, String s, RowMapper<?> m, Object[] a) {
+                return e.queryOne(s, m, a);
+            }
+        },
         UPDATE {
-                    @Override
-                    public Object run(QueryExecutor e, String s, RowMapper<?> m, Object[] a) {
-                        return e.update(s, a);
-                    }
-                },
+            @Override
+            public Object run(QueryExecutor e, String s, RowMapper<?> m, Object[] a) {
+                return e.update(s, a);
+            }
+        },
         VOID {
-                    @Override
-                    public Object run(QueryExecutor e, String s, RowMapper<?> m, Object[] a) {
-                        e.update(s, a);
-                        return null;
-                    }
-                };
+            @Override
+            public Object run(QueryExecutor e, String s, RowMapper<?> m, Object[] a) {
+                e.update(s, a);
+                return null;
+            }
+        };
 
-        private static final Map<Class<?>, ReturnedType> DISPATCH = new HashMap<>(); // косенко, привет
-
+        /**
+         * Карта соответствия Java-типа возвращаемого значения -> стратегия выполнения.
+         */
+        private static final Map<Class<?>, ReturnedType> DISPATCH = new HashMap<>();
 
         static {
             DISPATCH.put(void.class, VOID);
@@ -92,10 +120,9 @@ public class RepositoryInvocationHandler<T> implements InvocationHandler {
         }
 
 
-        static ReturnedType of(final Method method)  {
-            Class<?> returnType = method.getReturnType();
-            if (DISPATCH.containsKey(returnType))
-            {
+        static ReturnedType of(final Method method) {
+            final Class<?> returnType = method.getReturnType();
+            if (DISPATCH.containsKey(returnType)) {
                 return DISPATCH.get(returnType);
             }
             throw new UnsupportedOperationException(

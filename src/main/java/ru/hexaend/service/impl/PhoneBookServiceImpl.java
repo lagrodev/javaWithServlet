@@ -10,11 +10,25 @@ import ru.hexaend.util.PhoneValidator;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Реализация {@link PhoneBookService}.
+ *
+ * <p>Выполняет валидацию телефонных номеров через {@link PhoneValidator}
+ * и делегирует персистентные операции в {@link ContactRepository}.
+ * При отсутствии контакта выбрасывает {@link ContactNotFoundException},
+ * при невалидных данных — {@link ValidationException}.</p>
+ *
+ * @author Vasily Melnik
+ */
 public class PhoneBookServiceImpl implements PhoneBookService {
 
     private final ContactRepository contactRepository;
     private final PhoneValidator phoneValidator;
 
+    /**
+     * @param contactRepository репозиторий контактов
+     * @param phoneValidator    валидатор телефонных номеров
+     */
     public PhoneBookServiceImpl(ContactRepository contactRepository, PhoneValidator phoneValidator) {
         this.contactRepository = contactRepository;
         this.phoneValidator = phoneValidator;
@@ -23,7 +37,7 @@ public class PhoneBookServiceImpl implements PhoneBookService {
     @Override
     public Contact addContact(String firstName, String lastName, List<String> phoneNumbers) {
         validatePhoneNumber(phoneNumbers);
-        Contact contact = new Contact(
+        final Contact contact = new Contact(
                 firstName, lastName, phoneNumbers
         );
         contactRepository.save(contact);
@@ -39,7 +53,7 @@ public class PhoneBookServiceImpl implements PhoneBookService {
 
     @Override
     public Contact editContact(UUID contactId, String firstName, String lastName, List<String> phoneNumbers) {
-        Contact contact = contactRepository.findById(contactId).orElseThrow(
+        final Contact contact = contactRepository.findById(contactId).orElseThrow(
                 () -> new ContactNotFoundException("Contact with id " + contactId + " not found")
         );
         validatePhoneNumber(phoneNumbers);
@@ -53,12 +67,11 @@ public class PhoneBookServiceImpl implements PhoneBookService {
 
     @Override
     public Contact addPhoneNumber(UUID contactId, String phoneNumber) {
-        Contact contact = contactRepository.findById(
+        final Contact contact = contactRepository.findById(
                 contactId
         ).orElseThrow(() -> new ContactNotFoundException("Contact with id " + contactId + " not found"));
 
-        if (!phoneValidator.isValid(phoneNumber))
-        {
+        if (!phoneValidator.isValid(phoneNumber)) {
             throw new ValidationException(
                     "Phone number " + phoneNumber + " is invalid"
             );
@@ -76,8 +89,7 @@ public class PhoneBookServiceImpl implements PhoneBookService {
 
     @Override
     public List<Contact> searchByLastName(String lastName) {
-        if (lastName == null || lastName.isBlank())
-        {
+        if (lastName == null || lastName.isBlank()) {
             return contactRepository.findAll();
         }
         return contactRepository.findByLastName(lastName);
@@ -85,8 +97,7 @@ public class PhoneBookServiceImpl implements PhoneBookService {
 
     @Override
     public List<Contact> searchByPhoneNumber(String phoneNumber) {
-        if (phoneNumber == null || phoneNumber.isBlank())
-        {
+        if (phoneNumber == null || phoneNumber.isBlank()) {
             return contactRepository.findAll();
         }
         return contactRepository.findByPhoneNumber(phoneNumber);
@@ -95,8 +106,7 @@ public class PhoneBookServiceImpl implements PhoneBookService {
 
     @Override
     public List<Contact> searchByFirstOrLastName(String query) {
-        if (query == null || query.isBlank())
-        {
+        if (query == null || query.isBlank()) {
             return contactRepository.findAll();
         }
         return contactRepository.findByFirstNameContainingOrLastNameContaining(query);
@@ -109,15 +119,18 @@ public class PhoneBookServiceImpl implements PhoneBookService {
         );
     }
 
+    /**
+     * Проверяет каждый номер из списка через {@link PhoneValidator}.
+     *
+     * @param phoneNumbers список номеров для проверки
+     * @throws ValidationException если список пуст или хотя бы один номер невалиден
+     */
     private void validatePhoneNumber(List<String> phoneNumbers) {
-        if (phoneNumbers == null || phoneNumbers.isEmpty())
-        {
+        if (phoneNumbers == null || phoneNumbers.isEmpty()) {
             throw new ValidationException("Phone number is empty");
         }
-        for (String phoneNumber : phoneNumbers)
-        {
-            if (!phoneValidator.isValid(phoneNumber))
-            {
+        for (String phoneNumber : phoneNumbers) {
+            if (!phoneValidator.isValid(phoneNumber)) {
                 throw new ValidationException("Phone number is invalid");
             }
         }

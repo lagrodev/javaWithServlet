@@ -1,8 +1,15 @@
 package ru.hexaend.ui;
 
 import ru.hexaend.service.PhoneBookService;
-import ru.hexaend.ui.command.*;
-import ru.hexaend.ui.command.impl.*;
+import ru.hexaend.ui.command.Command;
+import ru.hexaend.ui.command.ConsoleHelper;
+import ru.hexaend.ui.command.impl.AddContactCommand;
+import ru.hexaend.ui.command.impl.AddPhoneCommand;
+import ru.hexaend.ui.command.impl.DeleteContactCommand;
+import ru.hexaend.ui.command.impl.EditContactCommand;
+import ru.hexaend.ui.command.impl.SearchByLastNameCommand;
+import ru.hexaend.ui.command.impl.SearchByPhoneCommand;
+import ru.hexaend.ui.command.impl.ShowAllCommand;
 
 import java.util.Map;
 import java.util.Scanner;
@@ -10,11 +17,22 @@ import java.util.Scanner;
 import static ru.hexaend.ui.command.ConsoleHelper.HEADER;
 import static ru.hexaend.ui.command.ConsoleHelper.SEPARATOR;
 
+/**
+ * Консольный пользовательский интерфейс телефонного справочника.
+ *
+ * <p>Отображает меню команд и диспетчеризирует выбор пользователя
+ * на соответствующую реализацию {@link Command}.</p>
+ *
+ * @author Vasily Melnik
+ */
 public class ConsoleUi {
 
     private final ConsoleHelper helper;
     private final Map<String, Command> commands;
 
+    /**
+     * @param service сервис бизнес-логики телефонного справочника
+     */
     public ConsoleUi(PhoneBookService service) {
         this.helper = new ConsoleHelper(new Scanner(System.in));
         this.commands = Map.of(
@@ -28,6 +46,9 @@ public class ConsoleUi {
         );
     }
 
+    /**
+     * Запускает цикл консольного интерфейса до выбора пункта «Выход».
+     */
     public void start() {
         System.out.println(HEADER);
         System.out.println("           ТЕЛЕФОННЫЙ СПРАВОЧНИК");
@@ -36,22 +57,16 @@ public class ConsoleUi {
         boolean running = true;
         while (running) {
             printMenu();
-            String choice = helper.readLine("Выберите пункт меню: ");
+            final String choice = helper.readLine("Выберите пункт меню: ");
             System.out.println();
-            if ("0".equals(choice))
-            {
+            if ("0".equals(choice)) {
                 running = false;
-            }
-            else
-            {
-                Command cmd = commands.get(choice);
-                if (cmd != null)
-                {
+            } else {
+                final Command cmd = commands.get(choice);
+                if (cmd != null) {
                     cmd.execute();
-                }
-                else
-                {
-                    System.out.println("  ⚠  Неверный пункт меню. Попробуйте снова.\n");
+                } else {
+                    System.out.println("Неверный пункт меню. Попробуйте снова.\n");
                 }
             }
         }
@@ -59,6 +74,9 @@ public class ConsoleUi {
         System.out.println("До свидания!");
     }
 
+    /**
+     * Печатает главное меню команд.
+     */
     private void printMenu() {
         System.out.println(SEPARATOR);
         System.out.println("  1. Показать все контакты");

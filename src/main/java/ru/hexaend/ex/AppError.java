@@ -1,67 +1,86 @@
 package ru.hexaend.ex;
 
-
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Map;
 
-
+/**
+ * Неизменяемое представление ошибки, возвращаемое клиенту.
+ *
+ * <p>Содержит HTTP-статус, краткое наименование ошибки, человекочитаемое
+ * сообщение, метку времени и (опционально) карту ошибок валидации полей.</p>
+ *
+ * @author Vasily Melnik
+ */
 public class AppError {
-    private int status;
-    private String error;
-    private String message;
-    private Instant timestamp;
-    private Map<String, String> validationErrors;
 
+    private final int status;
+    private final String error;
+    private final String message;
+    private final Instant timestamp;
+    private final Map<String, String> validationErrors;
+
+    /**
+     * Создаёт объект ошибки без деталей валидации.
+     *
+     * @param error   краткое наименование ошибки (например, {@code "Not Found"})
+     * @param message описание ошибки для пользователя
+     * @param status  HTTP-статус код
+     */
     public AppError(String error, String message, int status) {
+        this(error, message, status, Collections.emptyMap());
+    }
+
+    /**
+     * Создаёт объект ошибки с деталями валидации полей.
+     *
+     * @param error            краткое наименование ошибки
+     * @param message          описание ошибки для пользователя
+     * @param status           HTTP-статус код
+     * @param validationErrors карта «имя поля → описание ошибки»
+     */
+    public AppError(String error, String message, int status, Map<String, String> validationErrors) {
         this.timestamp = Instant.now();
         this.status = status;
         this.message = message;
         this.error = error;
+        this.validationErrors = validationErrors != null
+                ? Collections.unmodifiableMap(validationErrors)
+                : Collections.emptyMap();
     }
 
-
-    public AppError(String error, String message, int status, Map<String, String> validationErrors) {
-        this(error, message, status); // Вызываем базовый конструктор
-        this.validationErrors = validationErrors;
-    }
-
+    /**
+     * @return HTTP-статус код ошибки
+     */
     public int getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
+    /**
+     * @return краткое наименование ошибки
+     */
     public String getError() {
         return error;
     }
 
-    public void setError(String error) {
-        this.error = error;
-    }
-
+    /**
+     * @return человекочитаемое описание ошибки
+     */
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
+    /**
+     * @return момент возникновения ошибки
+     */
     public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Instant timestamp) {
-        this.timestamp = timestamp;
-    }
-
+    /**
+     * @return неизменяемая карта ошибок валидации (пустая, если валидация не применялась)
+     */
     public Map<String, String> getValidationErrors() {
         return validationErrors;
-    }
-
-    public void setValidationErrors(Map<String, String> validationErrors) {
-        this.validationErrors = validationErrors;
     }
 }

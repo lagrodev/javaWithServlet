@@ -9,15 +9,27 @@ import jakarta.servlet.ServletResponse;
 
 import java.io.IOException;
 
+/**
+ * Servlet-фильтр для установки кодировки UTF-8
+ * на все входящие запросы и исходящие ответы.
+ *
+ * @author Vasily Melnik
+ */
 public class EncodingFilter implements Filter {
-    public void init(FilterConfig config) throws ServletException {
 
+    @Override
+    public void init(FilterConfig config) {
+        // Инициализация не требуется
     }
 
+    @Override
     public void destroy() {
-
+        // Освобождение ресурсов не требуется
     }
 
+    /**
+     * Устанавливает кодировку UTF-8 для запроса и ответа.
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws ServletException, IOException {
