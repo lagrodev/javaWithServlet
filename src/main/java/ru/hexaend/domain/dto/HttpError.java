@@ -1,4 +1,7 @@
-package ru.hexaend.ex;
+package ru.hexaend.domain.dto;
+
+import ru.hexaend.domain.exeptions.ApplicationException;
+import ru.hexaend.domain.exeptions.ErrorFilter;
 
 /**
  * Перечисление стандартных HTTP-ошибок приложения.

@@ -1,6 +1,6 @@
 package ru.hexaend.repository;
 
-import ru.hexaend.entity.AbstractEntity;
+import ru.hexaend.domain.entity.AbstractEntity;
 
 import java.util.List;
 import java.util.Optional;

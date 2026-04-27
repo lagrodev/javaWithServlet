@@ -1,13 +1,14 @@
 package ru.hexaend.ui.command;
 
-import ru.hexaend.entity.Contact;
+import ru.hexaend.util.ContactConstraints;
+import ru.hexaend.domain.entity.Contact;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
-import static ru.hexaend.domain.ContactConstraints.MAX_PHONES;
+import static ru.hexaend.util.ContactConstraints.MAX_PHONES;
 
 /**
  * Вспомогательный класс для консольного ввода-вывода.
@@ -81,7 +82,7 @@ public class ConsoleHelper {
     }
 
     /**
-     * Читает до {@value ru.hexaend.domain.ContactConstraints#MAX_PHONES} телефонных номеров.
+     * Читает до {@value ContactConstraints#MAX_PHONES} телефонных номеров.
      * Первый номер обязателен, остальные можно пропустить (Enter).
      *
      * @return список введённых номеров

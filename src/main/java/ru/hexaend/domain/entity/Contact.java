@@ -1,4 +1,6 @@
-package ru.hexaend.entity;
+package ru.hexaend.domain.entity;
+
+import ru.hexaend.util.ContactConstraints;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -6,12 +8,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static ru.hexaend.domain.ContactConstraints.MAX_PHONES;
+import static ru.hexaend.util.ContactConstraints.MAX_PHONES;
 
 /**
  * Контакт телефонного справочника.
  *
- * <p>Хранит имя, фамилию и до {@value ru.hexaend.domain.ContactConstraints#MAX_PHONES}
+ * <p>Хранит имя, фамилию и до {@value ContactConstraints#MAX_PHONES}
  * телефонных номеров. Валидация полей выполняется при создании
  * и при каждом изменении через сеттеры.</p>
  *
@@ -28,7 +30,7 @@ public class Contact extends AbstractEntity<UUID> {
      *
      * @param firstName    имя контакта, не пустое
      * @param lastName     фамилия контакта, не пустая
-     * @param phoneNumbers список телефонных номеров (от 1 до {@value ru.hexaend.domain.ContactConstraints#MAX_PHONES})
+     * @param phoneNumbers список телефонных номеров (от 1 до {@value ContactConstraints#MAX_PHONES})
      */
     public Contact(String firstName, String lastName, List<String> phoneNumbers) {
         this(UUID.randomUUID(), firstName, lastName, phoneNumbers);
@@ -40,7 +42,7 @@ public class Contact extends AbstractEntity<UUID> {
      * @param id           UUID контакта
      * @param firstName    имя контакта, не пустое
      * @param lastName     фамилия контакта, не пустая
-     * @param phoneNumbers список телефонных номеров (от 1 до {@value ru.hexaend.domain.ContactConstraints#MAX_PHONES})
+     * @param phoneNumbers список телефонных номеров (от 1 до {@value ContactConstraints#MAX_PHONES})
      */
     public Contact(UUID id, String firstName, String lastName, List<String> phoneNumbers) {
         super(id);
@@ -77,7 +79,7 @@ public class Contact extends AbstractEntity<UUID> {
 
     /**
      * Проверяет инварианты контакта: имя/фамилия не пусты,
-     * количество номеров от 1 до {@link ru.hexaend.domain.ContactConstraints#MAX_PHONES}.
+     * количество номеров от 1 до {@link ContactConstraints#MAX_PHONES}.
      */
     private static void validate(String firstName, String lastName, List<String> phoneNumbers) {
         if (firstName == null || firstName.isBlank()) {
@@ -146,7 +148,7 @@ public class Contact extends AbstractEntity<UUID> {
     /**
      * Заменяет все телефонные номера контакта. Обновляет метку {@code updatedAt}.
      *
-     * @param phoneNumbers новый список номеров (от 1 до {@value ru.hexaend.domain.ContactConstraints#MAX_PHONES})
+     * @param phoneNumbers новый список номеров (от 1 до {@value ContactConstraints#MAX_PHONES})
      */
     public void setPhoneNumbers(List<String> phoneNumbers) {
         if (phoneNumbers == null || phoneNumbers.isEmpty()) {

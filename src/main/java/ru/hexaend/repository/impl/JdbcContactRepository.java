@@ -1,9 +1,10 @@
 package ru.hexaend.repository.impl;
 
-import ru.hexaend.entity.Contact;
-import ru.hexaend.ex.custom.DatabaseException;
+import ru.hexaend.domain.entity.Contact;
+import ru.hexaend.domain.exeptions.DatabaseException;
 import ru.hexaend.repository.ContactRepository;
 import ru.hexaend.repository.jdbc.DataSourceProvider;
+import ru.hexaend.util.SqlLoader;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,25 +30,15 @@ import java.util.UUID;
  */
 public class JdbcContactRepository implements ContactRepository {
 
-
-
-    /**
-     * Базовые колонки SELECT-запроса контакта с телефонами.
-     */
-    private static final String SELECT_COLUMNS =
-            "c.id, c.first_name, c.last_name, p.phone, c.created_at, c.updated_at";
-
-    /**
-     * FROM + LEFT JOIN для получения контактов вместе с телефонами.
-     */
-    private static final String FROM_WITH_PHONES =
-            "FROM contacts c LEFT JOIN phone_numbers p ON p.contact_id = c.id";
-
-    /**
-     * Стандартная сортировка: по фамилии, имени, номеру телефона (регистронезависимо).
-     */
-    private static final String ORDER_DEFAULT =
-            "ORDER BY LOWER(c.last_name), LOWER(c.first_name), p.phone";
+    private static final String SQL_UPSERT = SqlLoader.getAsString("sql/contact/upsert.sql");
+    private static final String SQL_DELETE_PHONES = SqlLoader.getAsString("sql/contact/delete-phones.sql");
+    private static final String SQL_INSERT_PHONE = SqlLoader.getAsString("sql/contact/insert-phone.sql");
+    private static final String SQL_DELETE_BY_ID = SqlLoader.getAsString("sql/contact/delete-by-id.sql");
+    private static final String SQL_FIND_ALL = SqlLoader.getAsString("sql/contact/find-all.sql");
+    private static final String SQL_FIND_BY_LAST_NAME = SqlLoader.getAsString("sql/contact/find-by-last-name.sql");
+    private static final String SQL_FIND_BY_ID = SqlLoader.getAsString("sql/contact/find-by-id.sql");
+    private static final String SQL_FIND_BY_PHONE = SqlLoader.getAsString("sql/contact/find-by-phone.sql");
+    private static final String SQL_FIND_BY_NAME_CONTAINING = SqlLoader.getAsString("sql/contact/find-by-name-containing.sql");
 
     private final DataSourceProvider dataSourceProvider;
 
@@ -73,22 +64,12 @@ public class JdbcContactRepository implements ContactRepository {
      */
     @Override
     public void save(Contact contact) {
-        final String upsertContact = """
-                INSERT INTO contacts (id, first_name, last_name, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?)
-                ON CONFLICT (id) DO UPDATE
-                    SET first_name = excluded.first_name,
-                        last_name  = excluded.last_name,
-                        updated_at = excluded.updated_at
-                """;
-        final String deletePhones = "DELETE FROM phone_numbers WHERE contact_id = ?";
-        final String insertPhone = "INSERT INTO phone_numbers (contact_id, phone) VALUES (?, ?)";
         final String idStr = contact.getId().toString();
 
         try (final Connection conn = dataSourceProvider.getConnection()) {
             conn.setAutoCommit(false);
             try {
-                try (final PreparedStatement ps = conn.prepareStatement(upsertContact)) {
+                try (final PreparedStatement ps = conn.prepareStatement(SQL_UPSERT)) {
                     ps.setString(1, idStr);
                     ps.setString(2, contact.getFirstName());
                     ps.setString(3, contact.getLastName());
@@ -96,11 +77,11 @@ public class JdbcContactRepository implements ContactRepository {
                     ps.setTimestamp(5, Timestamp.valueOf(contact.getUpdatedAt()));
                     ps.executeUpdate();
                 }
-                try (final PreparedStatement ps = conn.prepareStatement(deletePhones)) {
+                try (final PreparedStatement ps = conn.prepareStatement(SQL_DELETE_PHONES)) {
                     ps.setString(1, idStr);
                     ps.executeUpdate();
                 }
-                try (final PreparedStatement ps = conn.prepareStatement(insertPhone)) {
+                try (final PreparedStatement ps = conn.prepareStatement(SQL_INSERT_PHONE)) {
                     for (String phone : contact.getPhoneNumbers()) {
                         ps.setString(1, idStr);
                         ps.setString(2, phone);
@@ -135,9 +116,8 @@ public class JdbcContactRepository implements ContactRepository {
      */
     @Override
     public void deleteById(UUID id) {
-        final String sql = "DELETE FROM contacts WHERE id = ?";
         try (final Connection conn = dataSourceProvider.getConnection();
-             final PreparedStatement ps = conn.prepareStatement(sql)) {
+             final PreparedStatement ps = conn.prepareStatement(SQL_DELETE_BY_ID)) {
             ps.setString(1, id.toString());
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -152,8 +132,7 @@ public class JdbcContactRepository implements ContactRepository {
      */
     @Override
     public List<Contact> findAll() {
-        final String sql = "SELECT " + SELECT_COLUMNS + " " + FROM_WITH_PHONES + " " + ORDER_DEFAULT;
-        return queryWithPhones(sql);
+        return queryWithPhones(SQL_FIND_ALL);
     }
 
     /**
@@ -164,9 +143,7 @@ public class JdbcContactRepository implements ContactRepository {
      */
     @Override
     public List<Contact> findByLastName(String lastName) {
-        final String sql = "SELECT " + SELECT_COLUMNS + " " + FROM_WITH_PHONES
-                + " WHERE LOWER(c.last_name) LIKE ? " + ORDER_DEFAULT;
-        return queryWithPhones(sql, "%" + lastName.toLowerCase() + "%");
+        return queryWithPhones(SQL_FIND_BY_LAST_NAME, "%" + lastName.toLowerCase() + "%");
     }
 
     /**
@@ -177,9 +154,7 @@ public class JdbcContactRepository implements ContactRepository {
      */
     @Override
     public Optional<Contact> findById(UUID id) {
-        final String sql = "SELECT " + SELECT_COLUMNS + " " + FROM_WITH_PHONES
-                + " WHERE c.id = ? ORDER BY p.id";
-        final List<Contact> list = queryWithPhones(sql, id.toString());
+        final List<Contact> list = queryWithPhones(SQL_FIND_BY_ID, id.toString());
         return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
 
@@ -191,10 +166,7 @@ public class JdbcContactRepository implements ContactRepository {
      */
     @Override
     public List<Contact> findByPhoneNumber(String phoneNumber) {
-        final String sql = "SELECT " + SELECT_COLUMNS
-                + " FROM contacts c JOIN phone_numbers p ON p.contact_id = c.id"
-                + " WHERE p.phone LIKE ? " + ORDER_DEFAULT;
-        return queryWithPhones(sql, "%" + phoneNumber + "%");
+        return queryWithPhones(SQL_FIND_BY_PHONE, "%" + phoneNumber + "%");
     }
 
     /**
@@ -205,10 +177,8 @@ public class JdbcContactRepository implements ContactRepository {
      */
     @Override
     public List<Contact> findByFirstNameContainingOrLastNameContaining(String query) {
-        final String sql = "SELECT " + SELECT_COLUMNS + " " + FROM_WITH_PHONES
-                + " WHERE LOWER(c.first_name) LIKE ? OR LOWER(c.last_name) LIKE ? " + ORDER_DEFAULT;
         final String param = "%" + query.toLowerCase() + "%";
-        return queryWithPhones(sql, param, param);
+        return queryWithPhones(SQL_FIND_BY_NAME_CONTAINING, param, param);
     }
 
     /**

@@ -1,14 +1,11 @@
 package ru.hexaend.repository.jdbc.query;
 
-import ru.hexaend.repository.jdbc.mapper.RowMapper;
+import ru.hexaend.domain.dto.ReturnedType;
+import ru.hexaend.domain.mapper.RowMapper;
+import ru.hexaend.util.SqlLoader;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Обработчик вызовов для динамического прокси репозитория.
@@ -21,10 +18,9 @@ import java.util.Optional;
  * {@code List} — queryList, {@code Optional} — queryOne,
  * {@code int/Integer} — update, {@code void} — update без возврата.</p>
  *
- * @param <T> тип сущности репозитория
  * @author Vasily Melnik
  */
-public class RepositoryInvocationHandler<T> implements InvocationHandler {
+public class RepositoryInvocationHandler implements InvocationHandler {
 
     private final QueryExecutor executor;
 
@@ -70,7 +66,12 @@ public class RepositoryInvocationHandler<T> implements InvocationHandler {
             );
         }
 
-        final String sql = queryAnnotation.value();
+        final String sql;
+        if (!queryAnnotation.fromResource().isEmpty()) {
+            sql = SqlLoader.getAsString(queryAnnotation.fromResource());
+        } else {
+            sql = queryAnnotation.value();
+        }
         final Class<? extends RowMapper<?>> mapperClass = mapperAnnotation.value();
         final RowMapper<?> rowMapper = mapperClass.getDeclaredConstructor().newInstance();
 
@@ -78,60 +79,4 @@ public class RepositoryInvocationHandler<T> implements InvocationHandler {
 
     }
 
-    private enum ReturnedType {
-        LIST {
-            @Override
-            public Object run(QueryExecutor e, String s, RowMapper<?> m, Object[] a) {
-                return e.queryList(s, m, a);
-            }
-        },
-        OPTIONAL {
-            @Override
-            public Object run(QueryExecutor e, String s, RowMapper<?> m, Object[] a) {
-                return e.queryOne(s, m, a);
-            }
-        },
-        UPDATE {
-            @Override
-            public Object run(QueryExecutor e, String s, RowMapper<?> m, Object[] a) {
-                return e.update(s, a);
-            }
-        },
-        VOID {
-            @Override
-            public Object run(QueryExecutor e, String s, RowMapper<?> m, Object[] a) {
-                e.update(s, a);
-                return null;
-            }
-        };
-
-        /**
-         * Карта соответствия Java-типа возвращаемого значения -> стратегия выполнения.
-         */
-        private static final Map<Class<?>, ReturnedType> DISPATCH = new HashMap<>();
-
-        static {
-            DISPATCH.put(void.class, VOID);
-            DISPATCH.put(Void.class, VOID);
-            DISPATCH.put(List.class, LIST);
-            DISPATCH.put(Optional.class, OPTIONAL);
-            DISPATCH.put(int.class, UPDATE);
-            DISPATCH.put(Integer.class, UPDATE);
-        }
-
-
-        static ReturnedType of(final Method method) {
-            final Class<?> returnType = method.getReturnType();
-            if (DISPATCH.containsKey(returnType)) {
-                return DISPATCH.get(returnType);
-            }
-            throw new UnsupportedOperationException(
-                    "Неподдерживаемый тип возвращаемого значения: " + returnType.getName());
-        }
-
-
-        public abstract Object run(
-                QueryExecutor executor, String sql, RowMapper<?> mapper, Object[] args) throws SQLException;
-
-    }
 }

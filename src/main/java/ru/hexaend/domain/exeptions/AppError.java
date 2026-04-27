@@ -1,4 +1,6 @@
-package ru.hexaend.ex;
+package ru.hexaend.domain.exeptions;
+
+import ru.hexaend.domain.dto.HttpError;
 
 import java.time.Instant;
 import java.util.Collections;

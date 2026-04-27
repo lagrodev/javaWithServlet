@@ -1,7 +1,6 @@
-package ru.hexaend.ex.custom;
+package ru.hexaend.domain.exeptions;
 
-import ru.hexaend.ex.ApplicationException;
-import ru.hexaend.ex.HttpError;
+import ru.hexaend.domain.dto.HttpError;
 
 /**
  * Исключение, выбрасываемое при нарушении правил валидации входных данных.

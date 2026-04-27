@@ -1,6 +1,6 @@
 package ru.hexaend.repository.jdbc.query;
 
-import ru.hexaend.repository.jdbc.mapper.RowMapper;
+import ru.hexaend.domain.mapper.RowMapper;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -2,7 +2,7 @@ package ru.hexaend.rest;
 
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
-import ru.hexaend.ex.custom.DatabaseException;
+import ru.hexaend.domain.exeptions.DatabaseException;
 import ru.hexaend.repository.ContactRepository;
 import ru.hexaend.repository.impl.JdbcContactRepository;
 import ru.hexaend.repository.jdbc.DataSourceProvider;

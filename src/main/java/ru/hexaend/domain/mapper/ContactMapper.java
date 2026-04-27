@@ -1,6 +1,6 @@
-package ru.hexaend.repository.jdbc.mapper;
+package ru.hexaend.domain.mapper;
 
-import ru.hexaend.entity.Contact;
+import ru.hexaend.domain.entity.Contact;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

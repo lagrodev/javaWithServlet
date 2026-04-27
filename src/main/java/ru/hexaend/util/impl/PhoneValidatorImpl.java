@@ -1,17 +1,18 @@
 package ru.hexaend.util.impl;
 
+import ru.hexaend.util.ContactConstraints;
 import ru.hexaend.util.PhoneValidator;
 
 import java.util.regex.Pattern;
 
-import static ru.hexaend.domain.ContactConstraints.MIN_NUMBERS_IN_PHONE;
+import static ru.hexaend.util.ContactConstraints.MIN_NUMBERS_IN_PHONE;
 
 /**
  * Реализация {@link PhoneValidator} на основе регулярного выражения.
  *
  * <p>Допустимый формат: опциональный {@code +}, затем цифры, пробелы, дефисы,
  * точки и скобки (от 7 до 20 символов). Дополнительно проверяется,
- * что количество цифр не менее {@value ru.hexaend.domain.ContactConstraints#MIN_NUMBERS_IN_PHONE}.</p>
+ * что количество цифр не менее {@value ContactConstraints#MIN_NUMBERS_IN_PHONE}.</p>
  *
  * @author Vasily Melnik
  */

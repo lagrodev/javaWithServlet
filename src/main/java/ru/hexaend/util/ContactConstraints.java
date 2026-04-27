@@ -1,4 +1,4 @@
-package ru.hexaend.domain;
+package ru.hexaend.util;
 
 /**
  * Константы бизнес-ограничений для сущности «Контакт».

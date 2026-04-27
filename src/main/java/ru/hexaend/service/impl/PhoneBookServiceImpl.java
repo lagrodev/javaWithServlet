@@ -1,8 +1,8 @@
 package ru.hexaend.service.impl;
 
-import ru.hexaend.entity.Contact;
-import ru.hexaend.ex.custom.ContactNotFoundException;
-import ru.hexaend.ex.custom.ValidationException;
+import ru.hexaend.domain.entity.Contact;
+import ru.hexaend.domain.exeptions.ContactNotFoundException;
+import ru.hexaend.domain.exeptions.ValidationException;
 import ru.hexaend.repository.ContactRepository;
 import ru.hexaend.service.PhoneBookService;
 import ru.hexaend.util.PhoneValidator;

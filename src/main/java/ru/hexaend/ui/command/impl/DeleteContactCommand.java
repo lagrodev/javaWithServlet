@@ -1,6 +1,6 @@
 package ru.hexaend.ui.command.impl;
 
-import ru.hexaend.entity.Contact;
+import ru.hexaend.domain.entity.Contact;
 import ru.hexaend.service.PhoneBookService;
 import ru.hexaend.ui.command.Command;
 import ru.hexaend.ui.command.ConsoleHelper;

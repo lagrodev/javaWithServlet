@@ -4,7 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.hexaend.entity.Contact;
+import ru.hexaend.domain.entity.Contact;
 import ru.hexaend.service.PhoneBookService;
 
 import java.io.IOException;

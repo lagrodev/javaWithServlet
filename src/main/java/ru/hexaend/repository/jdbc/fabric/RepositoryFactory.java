@@ -37,7 +37,7 @@ public class RepositoryFactory {
         return (R) Proxy.newProxyInstance(
                 repositoryInterface.getClassLoader(),
                 new Class[]{repositoryInterface},
-                new RepositoryInvocationHandler<>(executor)
+                new RepositoryInvocationHandler(executor)
         );
     }
 }

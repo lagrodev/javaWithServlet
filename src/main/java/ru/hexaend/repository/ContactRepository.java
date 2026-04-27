@@ -1,6 +1,6 @@
 package ru.hexaend.repository;
 
-import ru.hexaend.entity.Contact;
+import ru.hexaend.domain.entity.Contact;
 
 import java.util.List;
 import java.util.UUID;

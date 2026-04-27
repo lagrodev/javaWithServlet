@@ -1,6 +1,7 @@
 package ru.hexaend.repository.jdbc;
 
-import ru.hexaend.ex.custom.DatabaseException;
+import ru.hexaend.domain.exeptions.DatabaseException;
+import ru.hexaend.util.SqlLoader;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -21,6 +22,9 @@ public class SchemaInitializer {
 
     private static final Logger LOG = Logger.getLogger(SchemaInitializer.class.getName());
 
+    private static final String SQL_CREATE_CONTACTS = SqlLoader.getAsString("sql/schema/create-contacts.sql");
+    private static final String SQL_CREATE_PHONES = SqlLoader.getAsString("sql/schema/create-phone-numbers.sql");
+
     private final DataSourceProvider dataSourceProvider;
 
     /**
@@ -36,29 +40,10 @@ public class SchemaInitializer {
      * @throws DatabaseException если не удалось выполнить DDL
      */
     public void initialize() {
-        String createContacts = """
-                CREATE TABLE IF NOT EXISTS contacts (
-                    id         VARCHAR(36) PRIMARY KEY,   
-                    first_name VARCHAR(100) NOT NULL,     
-                    last_name  VARCHAR(100) NOT NULL,     
-                    created_at TIMESTAMP NOT NULL DEFAULT now(), 
-                    updated_at TIMESTAMP NOT NULL DEFAULT now()  ч
-                )
-                """;
-
-        String createPhones = """
-                CREATE TABLE IF NOT EXISTS phone_numbers (
-                    id         SERIAL PRIMARY KEY,
-                    contact_id VARCHAR(36) NOT NULL,
-                    phone      VARCHAR(50) NOT NULL,
-                    FOREIGN KEY (contact_id) REFERENCES contacts(id) ON DELETE CASCADE
-                )
-                """;
-
         try (Connection conn = dataSourceProvider.getConnection();
              Statement stmt = conn.createStatement()) {
-            stmt.execute(createContacts);
-            stmt.execute(createPhones);
+            stmt.execute(SQL_CREATE_CONTACTS);
+            stmt.execute(SQL_CREATE_PHONES);
             LOG.info("Схема БД инициализирована успешно");
         } catch (SQLException e) {
             LOG.log(Level.SEVERE, "Ошибка инициализации схемы БД", e);

@@ -1,6 +1,8 @@
 package ru.hexaend.service;
 
-import ru.hexaend.entity.Contact;
+import ru.hexaend.domain.entity.Contact;
+import ru.hexaend.domain.exeptions.ContactNotFoundException;
+import ru.hexaend.domain.exeptions.ValidationException;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,7 +33,7 @@ public interface PhoneBookService {
      * Удаляет контакт по идентификатору.
      *
      * @param contactId UUID контакта
-     * @throws ru.hexaend.ex.custom.ContactNotFoundException если контакт не найден
+     * @throws ContactNotFoundException если контакт не найден
      */
     void deleteContact(UUID contactId);
 
@@ -43,7 +45,7 @@ public interface PhoneBookService {
      * @param lastName     новая фамилия
      * @param phoneNumbers новый список телефонных номеров
      * @return обновлённый контакт
-     * @throws ru.hexaend.ex.custom.ContactNotFoundException если контакт не найден
+     * @throws ContactNotFoundException если контакт не найден
      */
     Contact editContact(UUID contactId, String firstName, String lastName, List<String> phoneNumbers);
 
@@ -59,7 +61,7 @@ public interface PhoneBookService {
      *
      * @param contactId UUID контакта
      * @return найденный контакт
-     * @throws ru.hexaend.ex.custom.ContactNotFoundException если контакт не найден
+     * @throws ContactNotFoundException если контакт не найден
      */
     Contact getContactById(UUID contactId);
 
@@ -93,8 +95,8 @@ public interface PhoneBookService {
      * @param contactId   UUID контакта
      * @param phoneNumber номер телефона
      * @return обновлённый контакт
-     * @throws ru.hexaend.ex.custom.ContactNotFoundException если контакт не найден
-     * @throws ru.hexaend.ex.custom.ValidationException      если номер невалидный
+     * @throws ContactNotFoundException если контакт не найден
+     * @throws ValidationException      если номер невалидный
      */
     Contact addPhoneNumber(UUID contactId, String phoneNumber);
 }

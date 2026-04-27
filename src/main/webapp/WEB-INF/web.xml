@@ -34,7 +34,7 @@
 
     <filter>
         <filter-name>ErrorFilter</filter-name>
-        <filter-class>ru.hexaend.ex.ErrorFilter</filter-class>
+        <filter-class>ru.hexaend.domain.exeptions.ErrorFilter</filter-class>
     </filter>
 
     <filter-mapping>

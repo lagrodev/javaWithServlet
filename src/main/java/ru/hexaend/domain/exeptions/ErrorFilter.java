@@ -1,4 +1,4 @@
-package ru.hexaend.ex;
+package ru.hexaend.domain.exeptions;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -8,6 +8,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import ru.hexaend.domain.dto.HttpError;
 
 import java.io.IOException;
 import java.util.logging.Level;

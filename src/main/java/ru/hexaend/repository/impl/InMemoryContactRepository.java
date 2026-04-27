@@ -1,6 +1,6 @@
 package ru.hexaend.repository.impl;
 
-import ru.hexaend.entity.Contact;
+import ru.hexaend.domain.entity.Contact;
 import ru.hexaend.repository.ContactRepository;
 
 import java.util.Collections;

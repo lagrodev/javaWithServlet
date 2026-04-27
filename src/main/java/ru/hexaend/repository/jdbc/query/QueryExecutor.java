@@ -1,8 +1,8 @@
 package ru.hexaend.repository.jdbc.query;
 
-import ru.hexaend.ex.custom.DatabaseException;
+import ru.hexaend.domain.exeptions.DatabaseException;
 import ru.hexaend.repository.jdbc.DataSourceProvider;
-import ru.hexaend.repository.jdbc.mapper.RowMapper;
+import ru.hexaend.domain.mapper.RowMapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

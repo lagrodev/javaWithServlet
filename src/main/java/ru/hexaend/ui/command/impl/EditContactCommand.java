@@ -1,6 +1,6 @@
 package ru.hexaend.ui.command.impl;
 
-import ru.hexaend.entity.Contact;
+import ru.hexaend.domain.entity.Contact;
 import ru.hexaend.service.PhoneBookService;
 import ru.hexaend.ui.command.Command;
 import ru.hexaend.ui.command.ConsoleHelper;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static ru.hexaend.domain.ContactConstraints.MAX_PHONES;
+import static ru.hexaend.util.ContactConstraints.MAX_PHONES;
 
 /**
  * Команда редактирования существующего контакта.
