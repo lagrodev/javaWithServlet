@@ -3,8 +3,8 @@ package ru.hexaend.domain.exeptions;
 import ru.hexaend.domain.dto.HttpError;
 
 /**
- * Исключение, выбрасываемое при ошибке взаимодействия с базой данных.
- * Возвращает HTTP 500 Internal Server Error.
+ * Исключение, выбрасываемое при ошибке взаимодействия с базой данных. Возвращает HTTP 500 Internal
+ * Server Error.
  *
  * @author Vasily Melnik
  */

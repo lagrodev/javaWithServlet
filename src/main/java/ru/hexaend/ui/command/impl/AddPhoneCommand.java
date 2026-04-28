@@ -1,10 +1,10 @@
 package ru.hexaend.ui.command.impl;
 
-import ru.hexaend.util.ContactConstraints;
 import ru.hexaend.domain.entity.Contact;
 import ru.hexaend.service.PhoneBookService;
 import ru.hexaend.ui.command.Command;
 import ru.hexaend.ui.command.ConsoleHelper;
+import ru.hexaend.util.ContactConstraints;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,8 +12,8 @@ import java.util.UUID;
 import static ru.hexaend.util.ContactConstraints.MAX_PHONES;
 
 /**
- * Команда добавления телефонного номера к существующему контакту.
- * Проверяет лимит {@value ContactConstraints#MAX_PHONES} номеров.
+ * Команда добавления телефонного номера к существующему контакту. Проверяет лимит {@value
+ * ContactConstraints#MAX_PHONES} номеров.
  *
  * @author Vasily Melnik
  */
@@ -40,8 +40,14 @@ public class AddPhoneCommand implements Command {
         if (id == null) return;
 
         final Contact contact = service.getContactById(id);
-        System.out.println("  Текущие номера: " + String.join(", ", contact.getPhoneNumbers())
-                + "  (" + contact.getPhoneNumbers().size() + "/" + MAX_PHONES + ")");
+        System.out.println(
+                "  Текущие номера: "
+                        + String.join(", ", contact.getPhoneNumbers())
+                        + "  ("
+                        + contact.getPhoneNumbers().size()
+                        + "/"
+                        + MAX_PHONES
+                        + ")");
 
         if (contact.getPhoneNumbers().size() >= MAX_PHONES) {
             System.out.println(" Уже достигнут лимит из " + MAX_PHONES + " номеров.\n");
@@ -49,8 +55,10 @@ public class AddPhoneCommand implements Command {
         }
 
         try {
-            final Contact updated = service.addPhoneNumber(id, helper.readNonBlank("  Новый номер телефона: "));
-            System.out.println("Номер добавлен. Телефоны: " + String.join(", ", updated.getPhoneNumbers()));
+            final Contact updated =
+                    service.addPhoneNumber(id, helper.readNonBlank("  Новый номер телефона: "));
+            System.out.println(
+                    "Номер добавлен. Телефоны: " + String.join(", ", updated.getPhoneNumbers()));
         } catch (IllegalArgumentException | IllegalStateException e) {
             System.out.println("Ошибка: " + e.getMessage());
         }

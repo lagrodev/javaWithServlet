@@ -1,0 +1,19 @@
+# Conventional Commits (https://www.conventionalcommits.org/en/v1.0.0/)
+# Формат: <type>(<scope>): <description>
+#
+# Типы:
+#   feat:     новая функциональность
+#   fix:      исправление бага
+#   refactor: рефакторинг без изменения поведения
+#   test:     добавление/изменение тестов
+#   docs:     изменения в документации
+#   style:    форматирование, пробелы (без изменения кода)
+#   chore:    сборка, зависимости, конфигурация
+#   perf:     улучшение производительности
+#   ci:       изменения CI/CD
+#
+# Примеры:
+#   feat(contact): add search by phone number
+#   fix(repository): handle null parameter in findById
+#   refactor(exception): replace RuntimeException with typed exceptions
+#   test(service): add unit tests for PhoneBookServiceImpl

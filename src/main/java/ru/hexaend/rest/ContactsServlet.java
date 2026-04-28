@@ -13,7 +13,7 @@ import java.util.UUID;
  * Сервлет списка контактов.
  *
  * <p>GET — отображает список всех контактов ({@code contacts.jsp}).<br>
- * POST — обрабатывает действия: удаление контакта ({@code action=delete}).</p>
+ * POST — обрабатывает действия: удаление контакта ({@code action=delete}).
  *
  * @author Vasily Melnik
  */
@@ -40,10 +40,11 @@ public class ContactsServlet extends HttpServlet {
      * Обрабатывает POST-запросы: удаление контакта.
      *
      * <p>Параметры запроса:
+     *
      * <ul>
-     *   <li>{@code action} — тип действия ({@code "delete"})</li>
-     *   <li>{@code id} — UUID контакта</li>
-     * </ul></p>
+     *   <li>{@code action} — тип действия ({@code "delete"})
+     *   <li>{@code id} — UUID контакта
+     * </ul>
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

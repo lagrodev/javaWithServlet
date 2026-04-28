@@ -8,11 +8,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Аннотация для указания класса {@link RowMapper}, используемого
- * при маппинге результата SQL-запроса в объект.
+ * Аннотация для указания класса {@link RowMapper}, используемого при маппинге результата
+ * SQL-запроса в объект.
  *
- * <p>Используется совместно с {@link Query} и обрабатывается
- * в {@link RepositoryInvocationHandler}.</p>
+ * <p>Используется совместно с {@link Query} и обрабатывается в {@link RepositoryInvocationHandler}.
  *
  * @author Vasily Melnik
  */

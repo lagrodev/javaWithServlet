@@ -1,14 +1,14 @@
 package ru.hexaend.ui.command.impl;
 
-import ru.hexaend.util.ContactConstraints;
 import ru.hexaend.domain.entity.Contact;
 import ru.hexaend.service.PhoneBookService;
 import ru.hexaend.ui.command.Command;
 import ru.hexaend.ui.command.ConsoleHelper;
+import ru.hexaend.util.ContactConstraints;
 
 /**
- * Команда добавления нового контакта.
- * Запрашивает фамилию, имя и до {@value ContactConstraints#MAX_PHONES} телефонов.
+ * Команда добавления нового контакта. Запрашивает фамилию, имя и до {@value
+ * ContactConstraints#MAX_PHONES} телефонов.
  *
  * @author Vasily Melnik
  */

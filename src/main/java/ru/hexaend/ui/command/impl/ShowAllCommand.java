@@ -11,16 +11,16 @@ import ru.hexaend.ui.command.ConsoleHelper;
  */
 public class ShowAllCommand implements Command {
 
-    private final PhoneBookService service;
-    private final ConsoleHelper helper;
+  private final PhoneBookService service;
+  private final ConsoleHelper helper;
 
-    public ShowAllCommand(PhoneBookService service, ConsoleHelper helper) {
-        this.service = service;
-        this.helper = helper;
-    }
+  public ShowAllCommand(PhoneBookService service, ConsoleHelper helper) {
+    this.service = service;
+    this.helper = helper;
+  }
 
-    @Override
-    public void execute() {
-        helper.printContacts(service.getAllContacts(), "Справочник пуст.");
-    }
+  @Override
+  public void execute() {
+    helper.printContacts(service.getAllContacts(), "Справочник пуст.");
+  }
 }

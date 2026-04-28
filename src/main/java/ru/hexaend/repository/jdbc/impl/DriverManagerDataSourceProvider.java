@@ -7,14 +7,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Реализация {@link DataSourceProvider}, создающая новое JDBC-соединение
- * через {@link DriverManager} при каждом вызове {@link #getConnection()}.
+ * Реализация {@link DataSourceProvider}, создающая новое JDBC-соединение через {@link
+ * DriverManager} при каждом вызове {@link #getConnection()}.
  *
- * <p>Подходит для простых приложений и тестов. В продуктивной среде
- * рекомендуется заменить на реализацию с пулом соединений (HikariCP, DBCP).</p>
+ * <p>Подходит для простых приложений и тестов. В продуктивной среде рекомендуется заменить на
+ * реализацию с пулом соединений (HikariCP, DBCP).
  *
- * <p><b>Контракт:</b> вызывающая сторона обязана самостоятельно закрыть
- * полученное соединение после использования.</p>
+ * <p><b>Контракт:</b> вызывающая сторона обязана самостоятельно закрыть полученное соединение после
+ * использования.
  *
  * @author Vasily Melnik
  */
@@ -49,8 +49,7 @@ public class DriverManagerDataSourceProvider implements DataSourceProvider {
     /**
      * Открывает и возвращает новое JDBC-соединение.
      *
-     * <p>Если {@code username} задан — подключение выполняется с аутентификацией,
-     * иначе — без неё.</p>
+     * <p>Если {@code username} задан — подключение выполняется с аутентификацией, иначе — без неё.
      *
      * @return новое открытое соединение с БД
      * @throws SQLException если не удалось установить соединение
@@ -61,5 +60,5 @@ public class DriverManagerDataSourceProvider implements DataSourceProvider {
             return DriverManager.getConnection(url, username, password);
         }
         return DriverManager.getConnection(url);
-    }
+  }
 }

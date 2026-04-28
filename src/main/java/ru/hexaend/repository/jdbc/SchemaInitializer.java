@@ -12,9 +12,8 @@ import java.util.logging.Logger;
 /**
  * Инициализатор схемы базы данных.
  *
- * <p>Создаёт таблицы {@code contacts} и {@code phone_numbers},
- * если они ещё не существуют. Вызывается один раз при старте
- * приложения из {@link ru.hexaend.rest.AppContextListener}.</p>
+ * <p>Создаёт таблицы {@code contacts} и {@code phone_numbers}, если они ещё не существуют.
+ * Вызывается один раз при старте приложения из {@link ru.hexaend.rest.AppContextListener}.
  *
  * @author Vasily Melnik
  */
@@ -22,8 +21,10 @@ public class SchemaInitializer {
 
     private static final Logger LOG = Logger.getLogger(SchemaInitializer.class.getName());
 
-    private static final String SQL_CREATE_CONTACTS = SqlLoader.getAsString("sql/schema/create-contacts.sql");
-    private static final String SQL_CREATE_PHONES = SqlLoader.getAsString("sql/schema/create-phone-numbers.sql");
+    private static final String SQL_CREATE_CONTACTS =
+            SqlLoader.getAsString("sql/schema/create-contacts.sql");
+    private static final String SQL_CREATE_PHONES =
+            SqlLoader.getAsString("sql/schema/create-phone-numbers.sql");
 
     private final DataSourceProvider dataSourceProvider;
 
@@ -49,5 +50,5 @@ public class SchemaInitializer {
             LOG.log(Level.SEVERE, "Ошибка инициализации схемы БД", e);
             throw new DatabaseException("Ошибка инициализации схемы БД", e);
         }
-    }
+  }
 }

@@ -1,8 +1,8 @@
 package ru.hexaend.repository.jdbc.query;
 
 import ru.hexaend.domain.exeptions.DatabaseException;
-import ru.hexaend.repository.jdbc.DataSourceProvider;
 import ru.hexaend.domain.mapper.RowMapper;
+import ru.hexaend.repository.jdbc.DataSourceProvider;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,8 +16,8 @@ import java.util.Optional;
 /**
  * Исполнитель SQL-запросов поверх {@link DataSourceProvider}.
  *
- * <p>Инкапсулирует получение соединения, подготовку {@link PreparedStatement},
- * маппинг результатов и корректное освобождение ресурсов.</p>
+ * <p>Инкапсулирует получение соединения, подготовку {@link PreparedStatement}, маппинг результатов
+ * и корректное освобождение ресурсов.
  *
  * @author Vasily Melnik
  */
@@ -97,11 +97,12 @@ public class QueryExecutor {
     /**
      * Создаёт {@link PreparedStatement} и подставляет параметры.
      */
-    private PreparedStatement prepare(Connection conn, String sql, Object[] params) throws SQLException {
+    private PreparedStatement prepare(Connection conn, String sql, Object[] params)
+            throws SQLException {
         final PreparedStatement ps = conn.prepareStatement(sql);
         for (int i = 0; i < params.length; i++) {
-            ps.setObject(i + 1, params[i]);
-        }
-        return ps;
+      ps.setObject(i + 1, params[i]);
     }
+    return ps;
+  }
 }

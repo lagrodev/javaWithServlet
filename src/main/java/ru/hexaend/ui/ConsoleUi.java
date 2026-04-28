@@ -20,8 +20,8 @@ import static ru.hexaend.ui.command.ConsoleHelper.SEPARATOR;
 /**
  * Консольный пользовательский интерфейс телефонного справочника.
  *
- * <p>Отображает меню команд и диспетчеризирует выбор пользователя
- * на соответствующую реализацию {@link Command}.</p>
+ * <p>Отображает меню команд и диспетчеризирует выбор пользователя на соответствующую реализацию
+ * {@link Command}.
  *
  * @author Vasily Melnik
  */
@@ -35,15 +35,15 @@ public class ConsoleUi {
      */
     public ConsoleUi(PhoneBookService service) {
         this.helper = new ConsoleHelper(new Scanner(System.in));
-        this.commands = Map.of(
-                "1", new ShowAllCommand(service, helper),
-                "2", new AddContactCommand(service, helper),
-                "3", new EditContactCommand(service, helper),
-                "4", new DeleteContactCommand(service, helper),
-                "5", new SearchByLastNameCommand(service, helper),
-                "6", new SearchByPhoneCommand(service, helper),
-                "7", new AddPhoneCommand(service, helper)
-        );
+        this.commands =
+                Map.of(
+                        "1", new ShowAllCommand(service, helper),
+                        "2", new AddContactCommand(service, helper),
+                        "3", new EditContactCommand(service, helper),
+                        "4", new DeleteContactCommand(service, helper),
+                        "5", new SearchByLastNameCommand(service, helper),
+                        "6", new SearchByPhoneCommand(service, helper),
+                        "7", new AddPhoneCommand(service, helper));
     }
 
     /**

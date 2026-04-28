@@ -10,9 +10,9 @@ import static ru.hexaend.util.ContactConstraints.MIN_NUMBERS_IN_PHONE;
 /**
  * Реализация {@link PhoneValidator} на основе регулярного выражения.
  *
- * <p>Допустимый формат: опциональный {@code +}, затем цифры, пробелы, дефисы,
- * точки и скобки (от 7 до 20 символов). Дополнительно проверяется,
- * что количество цифр не менее {@value ContactConstraints#MIN_NUMBERS_IN_PHONE}.</p>
+ * <p>Допустимый формат: опциональный {@code +}, затем цифры, пробелы, дефисы, точки и скобки (от 7
+ * до 20 символов). Дополнительно проверяется, что количество цифр не менее {@value
+ * ContactConstraints#MIN_NUMBERS_IN_PHONE}.
  *
  * @author Vasily Melnik
  */
@@ -39,9 +39,7 @@ public class PhoneValidatorImpl implements PhoneValidator {
             return false;
         }
 
-        final long digitsCount = trimmed.chars()
-                .filter(Character::isDigit)
-                .count();
+        final long digitsCount = trimmed.chars().filter(Character::isDigit).count();
         return digitsCount >= MIN_NUMBERS_IN_PHONE;
     }
 }

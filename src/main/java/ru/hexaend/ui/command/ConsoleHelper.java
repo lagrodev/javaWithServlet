@@ -1,7 +1,7 @@
 package ru.hexaend.ui.command;
 
-import ru.hexaend.util.ContactConstraints;
 import ru.hexaend.domain.entity.Contact;
+import ru.hexaend.util.ContactConstraints;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +13,8 @@ import static ru.hexaend.util.ContactConstraints.MAX_PHONES;
 /**
  * Вспомогательный класс для консольного ввода-вывода.
  *
- * <p>Предоставляет методы для печати таблицы контактов,
- * чтения пользовательского ввода и выбора контакта из списка.</p>
+ * <p>Предоставляет методы для печати таблицы контактов, чтения пользовательского ввода и выбора
+ * контакта из списка.
  *
  * @author Vasily Melnik
  */
@@ -24,6 +24,7 @@ public class ConsoleHelper {
      * Ширина таблицы в символах.
      */
     public static final int WIDTH = 65;
+
     public static final String SEPARATOR = "-".repeat(WIDTH);
     public static final String HEADER = "=".repeat(WIDTH);
 
@@ -50,9 +51,9 @@ public class ConsoleHelper {
             System.out.println("  " + SEPARATOR);
             for (int i = 0; i < contacts.size(); i++) {
                 final Contact c = contacts.get(i);
-                System.out.printf("  %-4d %-20s %-15s  %s%n",
-                        i + 1, c.getLastName(), c.getFirstName(),
-                        String.join(", ", c.getPhoneNumbers()));
+                System.out.printf(
+                        "  %-4d %-20s %-15s  %s%n",
+                        i + 1, c.getLastName(), c.getFirstName(), String.join(", ", c.getPhoneNumbers()));
             }
         }
         System.out.println();
@@ -82,17 +83,18 @@ public class ConsoleHelper {
     }
 
     /**
-     * Читает до {@value ContactConstraints#MAX_PHONES} телефонных номеров.
-     * Первый номер обязателен, остальные можно пропустить (Enter).
+     * Читает до {@value ContactConstraints#MAX_PHONES} телефонных номеров. Первый номер обязателен,
+     * остальные можно пропустить (Enter).
      *
      * @return список введённых номеров
      */
     public List<String> readPhones() {
         final List<String> phones = new ArrayList<>();
         for (int i = 1; i <= MAX_PHONES; i++) {
-            final String phone = i == 1
-                    ? readNonBlank("  Телефон 1: ")
-                    : readLine("  Телефон " + i + " (Enter — пропустить): ");
+            final String phone =
+                    i == 1
+                            ? readNonBlank("  Телефон 1: ")
+                            : readLine("  Телефон " + i + " (Enter — пропустить): ");
             if (phone.isBlank() && i > 1) break;
             phones.add(phone.trim());
         }

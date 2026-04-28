@@ -8,7 +8,7 @@ import java.util.Optional;
 /**
  * Обобщённый репозиторий для CRUD-операций над сущностями.
  *
- * @param <E>  тип сущности, наследующей {@link AbstractEntity}
+ * @param <E> тип сущности, наследующей {@link AbstractEntity}
  * @param <ID> тип идентификатора сущности
  * @author Vasily Melnik
  */
@@ -47,6 +47,6 @@ public interface MyRepository<E extends AbstractEntity<ID>, ID> {
      * Возвращает все сущности, отсортированные по умолчанию.
      *
      * @return список всех сущностей
-     */
-    List<E> findAll();
+   */
+  List<E> findAll();
 }

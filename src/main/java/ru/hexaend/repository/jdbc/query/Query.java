@@ -8,15 +8,17 @@ import java.lang.annotation.Target;
 /**
  * Аннотация для привязки SQL-запроса к методу репозитория.
  *
- * <p>Используется совместно с {@link Mapper} и обрабатывается
- * в {@link RepositoryInvocationHandler} через динамический прокси.</p>
+ * <p>Используется совместно с {@link Mapper} и обрабатывается в {@link RepositoryInvocationHandler}
+ * через динамический прокси.
  *
  * <p>SQL можно указать двумя способами:
+ *
  * <ul>
- *   <li>Инлайн: {@code @Query("SELECT * FROM contacts")}</li>
- *   <li>Из ресурса: {@code @Query(fromResource = "sql/contact/find-all.sql")}</li>
+ *   <li>Инлайн: {@code @Query("SELECT * FROM contacts")}
+ *   <li>Из ресурса: {@code @Query(fromResource = "sql/contact/find-all.sql")}
  * </ul>
- * Если указан {@link #fromResource}, он имеет приоритет над {@link #value()}.</p>
+ *
+ * Если указан {@link #fromResource}, он имеет приоритет над {@link #value()}.
  *
  * @author Vasily Melnik
  */
@@ -32,8 +34,8 @@ public @interface Query {
     /**
      * Путь к SQL-файлу в classpath (например, {@code "sql/contact/find-all.sql"}).
      *
-     * <p>Если не пуст — SQL загружается через {@link ru.hexaend.util.SqlLoader}
-     * и имеет приоритет над {@link #value()}.</p>
+     * <p>Если не пуст — SQL загружается через {@link ru.hexaend.util.SqlLoader} и имеет приоритет над
+     * {@link #value()}.
      */
     String fromResource() default "";
 }

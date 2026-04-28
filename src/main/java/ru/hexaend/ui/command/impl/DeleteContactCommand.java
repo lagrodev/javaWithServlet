@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Команда удаления контакта из справочника.
- * Запрашивает подтверждение перед удалением.
+ * Команда удаления контакта из справочника. Запрашивает подтверждение перед удалением.
  *
  * @author Vasily Melnik
  */
@@ -37,7 +36,8 @@ public class DeleteContactCommand implements Command {
         if (id == null) return;
 
         final Contact contact = service.getContactById(id);
-        final String confirm = helper.readLine("  Удалить \"" + contact.getFullName() + "\"? (да/нет): ");
+        final String confirm =
+                helper.readLine("  Удалить \"" + contact.getFullName() + "\"? (да/нет): ");
 
         if (confirm.equalsIgnoreCase("да") || confirm.equalsIgnoreCase("д")) {
             try {

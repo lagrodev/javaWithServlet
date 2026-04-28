@@ -12,8 +12,8 @@ import java.util.UUID;
 import static ru.hexaend.util.ContactConstraints.MAX_PHONES;
 
 /**
- * Команда редактирования существующего контакта.
- * Позволяет изменить фамилию, имя и список телефонных номеров.
+ * Команда редактирования существующего контакта. Позволяет изменить фамилию, имя и список
+ * телефонных номеров.
  *
  * @author Vasily Melnik
  */
@@ -40,12 +40,19 @@ public class EditContactCommand implements Command {
         if (id == null) return;
 
         final Contact existing = service.getContactById(id);
-        System.out.println("  Редактирование: " + existing.getFullName()
-                + " | " + String.join(", ", existing.getPhoneNumbers()));
+        System.out.println(
+                "  Редактирование: "
+                        + existing.getFullName()
+                        + " | "
+                        + String.join(", ", existing.getPhoneNumbers()));
         System.out.println("  (Оставьте поле пустым, чтобы сохранить текущее значение)");
 
-        final String lastName = helper.readWithDefault("  Новая фамилия [" + existing.getLastName() + "]: ", existing.getLastName());
-        final String firstName = helper.readWithDefault("  Новое имя [" + existing.getFirstName() + "]: ", existing.getFirstName());
+        final String lastName =
+                helper.readWithDefault(
+                        "  Новая фамилия [" + existing.getLastName() + "]: ", existing.getLastName());
+        final String firstName =
+                helper.readWithDefault(
+                        "  Новое имя [" + existing.getFirstName() + "]: ", existing.getFirstName());
         final List<String> phones = readUpdatedPhones(existing);
 
         try {
